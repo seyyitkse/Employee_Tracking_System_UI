@@ -1,12 +1,16 @@
 ﻿using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 using System.Text;
 using UI_Layer.Dtos.AnnouncementDto;
+using UI_Layer.Models;
 using UI_Layer.ValidationRules.Announcement;
 
 namespace UI_Layer.Controllers.Admin
 {
+    [Authorize]
     public class AnnouncementController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -20,9 +24,11 @@ namespace UI_Layer.Controllers.Admin
         public async Task<IActionResult> Index()
         {
             var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("JWTToken"));
             var responseMessage = await client.GetAsync("http://localhost:5144/api/Announcement");
             if (responseMessage.IsSuccessStatusCode)
             {
+                HttpContext.Session.SetString("JWTToken", responseObject.Message);
                 var jsonData = await responseMessage.Content.ReadAsStringAsync();
                 var values = JsonConvert.DeserializeObject<List<ResultAnnouncementDto>>(jsonData);
                 return View(values);
@@ -42,19 +48,33 @@ namespace UI_Layer.Controllers.Admin
             if (results.IsValid)
             {
                 var client = _httpClientFactory.CreateClient();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("JWTToken"));
                 var jsonData = JsonConvert.SerializeObject(newAnnouncement);
                 StringContent jsonAnnouncement = new(jsonData, Encoding.UTF8, "application/json");
                 var responseMessage = await client.PostAsync("http://localhost:5144/api/Announcement", jsonAnnouncement);
                 if (responseMessage.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("Index", "Announcement");
+                    var responseBody = await responseMessage.Content.ReadAsStringAsync();
+                    var responseObject = JsonConvert.DeserializeObject<EmployeeManagerResponse>(responseBody);
+
+                    if (responseObject.IsSuccess)
+                    {
+                        // JWT'yi yerel depolamada sakla
+                        HttpContext.Session.SetString("JWTToken", responseObject.Message);
+
+                        return RedirectToAction("Index", "Announcement");
+                    }
+                    else
+                    {
+                        // Kullanıcı girişi başarısız oldu
+                        ModelState.AddModelError(string.Empty, "Invalid email or password");
+                        return View();
+                    }
                 }
                 else
                 {
-                    foreach (var item in results.Errors)
-                    {
-                        ModelState.AddModelError(item.PropertyName, item.ErrorMessage);
-                    }
+                    ModelState.AddModelError(string.Empty, "Server error. Please try again later.");
+                    return View();
                 }
             }
             return View();
