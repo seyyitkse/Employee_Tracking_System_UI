@@ -1,10 +1,24 @@
-var builder = WebApplication.CreateBuilder(args);
+using Microsoft.AspNetCore.Authentication.Cookies;
 
-// Add services to the container.
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+options.Cookie.HttpOnly = true;
+options.Cookie.IsEssential = true;
+});
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
-var app = builder.Build();
 
+
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.CheckConsentNeeded = context => false;
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+});
+
+builder.Services.AddAuthorization();
+var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -15,20 +29,15 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseSession();
 app.UseRouting();
-
+app.UseCookiePolicy();
+app.UseAuthentication();
 app.UseAuthorization();
+//app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Announcement}/{action=Index}/{id?}");
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllerRoute(
-      name: "areas",
-      pattern: "{area:exists}/{controller=Admin}/{action=Index}/{id?}"
-    );
-});
+    pattern: "{controller=Employee}/{action=LoginEmployee}/{id?}");
 
 app.Run();

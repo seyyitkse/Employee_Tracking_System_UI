@@ -10,7 +10,6 @@ using UI_Layer.ValidationRules.Announcement;
 
 namespace UI_Layer.Controllers.Admin
 {
-    [Authorize]
     public class AnnouncementController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -23,12 +22,12 @@ namespace UI_Layer.Controllers.Admin
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            var accessToken = HttpContext.Request.Cookies["AuthenticationToken"];
             var client = _httpClientFactory.CreateClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("JWTToken"));
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             var responseMessage = await client.GetAsync("http://localhost:5144/api/Announcement");
             if (responseMessage.IsSuccessStatusCode)
             {
-                HttpContext.Session.SetString("JWTToken", responseObject.Message);
                 var jsonData = await responseMessage.Content.ReadAsStringAsync();
                 var values = JsonConvert.DeserializeObject<List<ResultAnnouncementDto>>(jsonData);
                 return View(values);
@@ -43,13 +42,14 @@ namespace UI_Layer.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> AddAnnouncement(CreateAnnouncementDto newAnnouncement)
         {
-            CreateAnnouncementValidator validations=new CreateAnnouncementValidator();
-            ValidationResult results=validations.Validate(newAnnouncement);
+            CreateAnnouncementValidator validations = new CreateAnnouncementValidator();
+            ValidationResult results = validations.Validate(newAnnouncement);
             if (results.IsValid)
             {
                 var client = _httpClientFactory.CreateClient();
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("JWTToken"));
+
                 var jsonData = JsonConvert.SerializeObject(newAnnouncement);
+
                 StringContent jsonAnnouncement = new(jsonData, Encoding.UTF8, "application/json");
                 var responseMessage = await client.PostAsync("http://localhost:5144/api/Announcement", jsonAnnouncement);
                 if (responseMessage.IsSuccessStatusCode)
@@ -59,14 +59,10 @@ namespace UI_Layer.Controllers.Admin
 
                     if (responseObject.IsSuccess)
                     {
-                        // JWT'yi yerel depolamada sakla
-                        HttpContext.Session.SetString("JWTToken", responseObject.Message);
-
                         return RedirectToAction("Index", "Announcement");
                     }
                     else
                     {
-                        // Kullanıcı girişi başarısız oldu
                         ModelState.AddModelError(string.Empty, "Invalid email or password");
                         return View();
                     }

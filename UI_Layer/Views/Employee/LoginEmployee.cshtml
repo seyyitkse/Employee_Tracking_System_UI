@@ -1,19 +1,60 @@
-﻿@model LoginEmployeeDto
-
+﻿<!-- Login.cshtml -->
+@model LoginEmployeeDto
 
 <h1>Giriş Yap</h1>
 
-<form asp-action="LoginEmployee" method="post">
+<form id="loginForm" method="post">
     <div asp-validation-summary="All"></div>
     <div>
-        <label asp-for="Email"></label>
+        <label asp-for="Email">Email</label>
         <input asp-for="Email" />
         <span asp-validation-for="Email"></span>
     </div>
     <div>
-        <label asp-for="Password"></label>
+        <label asp-for="Password">Password</label>
         <input asp-for="Password" type="password" />
         <span asp-validation-for="Password"></span>
     </div>
     <button type="submit">Giriş</button>
 </form>
+
+<script>
+    // Login formunu submit etme işlemi
+    document.getElementById("loginForm").addEventListener("submit", async function(event) {
+        event.preventDefault(); // Sayfanın yenilenmesini engelle
+
+        const formData = new FormData(this); // Form verilerini al
+        const loginData = {
+            email: formData.get("Email"),
+            password: formData.get("Password")
+        };
+
+        try {
+            // API'ye login isteği gönder
+            const response = await fetch("http://localhost:5144/api/Auth/Login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(loginData)
+            });
+
+            if (!response.ok) {
+                throw new Error("Giriş başarısız");
+            }
+
+            // Başarılı yanıt alındıysa token'ı al
+            const responseData = await response.json();
+            const token = responseData.token;
+
+            // Token'ı local storage'a kaydet
+            localStorage.setItem("token", token);
+
+            // Diğer işlemler (örneğin, yönlendirme)
+            window.location.href = "/Announcement/Index/"; // Örnek olarak Home sayfasına yönlendirme
+        } catch (error) {
+            console.error("Giriş hatası:", error);
+            // Hata işleme
+        }
+    });
+</script>
