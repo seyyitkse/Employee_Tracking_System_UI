@@ -1,0 +1,75 @@
+﻿@model CreateDepartmentDto
+
+@{
+    ViewData["Title"] = "AddDepartment";
+    Layout = "~/Views/AdminLayout/AdminLayout.cshtml";
+}
+
+
+<div class="container">
+    <h1 class="mt-5">Yeni Departman Ekle</h1>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <form id="departmentForm">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <br />
+                    <label asp-for="Name" class="control-label">Departman Adı:</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <br />
+                <button type="submit" class="btn btn-primary">Oluştur</button>
+                <a asp-action="Index" class="btn btn-outline-warning">Listeye Geri Dön</a>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts 
+{
+    <script>
+        // Department formunu submit etme işlemi
+        document.getElementById("departmentForm").addEventListener("submit", async function (event) {
+            event.preventDefault(); // Sayfanın yenilenmesini engelle
+
+            const formData = new FormData(this); // Form verilerini al
+            const departmentData = {
+                Name: formData.get("Name"),
+            };
+
+            try {
+                // Local Storage'dan token al
+                const token = localStorage.getItem("token");
+
+                // API'ye yeni departman ekleme isteği gönder
+                const response = await fetch("http://localhost:5144/api/Department", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify(departmentData)
+                });
+
+                if (!response.ok) {
+                    throw new Error("Departman ekleme başarısız");
+                }
+
+                // Başarılı yanıt alındıysa yönlendirme yapıyoruz
+                window.location.href = "/Department/Index";
+            } catch (error) {
+                console.error("Departman ekleme hatası:", error);
+                // Hata işleme
+            }
+        });
+    </script>
+}
+    
+
+ 
