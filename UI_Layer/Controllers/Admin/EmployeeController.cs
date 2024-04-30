@@ -1,19 +1,8 @@
 ﻿using FluentValidation.Results;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using System.Configuration;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http.Headers;
-using System.Security.Claims;
 using System.Text;
-using UI_Layer.Dtos.AnnouncementDto;
 using UI_Layer.Dtos.EmployeeDto;
-using UI_Layer.Dtos.JwtDto;
-using UI_Layer.Models;
-using UI_Layer.ValidationRules.Announcement;
 using UI_Layer.ValidationRules.Employee;
 
 namespace UI_Layer.Controllers.Admin
@@ -29,7 +18,6 @@ namespace UI_Layer.Controllers.Admin
         public async Task <IActionResult> Index()
         {
             var client = _httpClientFactory.CreateClient();
-            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",accessToken);
             var responseMessage = await client.GetAsync("http://localhost:5144/api/Employee");
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -74,33 +62,6 @@ namespace UI_Layer.Controllers.Admin
         {
             return View();
         }
-        //[HttpPost]
-        //public async Task<IActionResult> LoginEmployee(LoginEmployeeDto loginEmployee)
-        //{
-        //    EmployeeLoginValidator validations = new EmployeeLoginValidator();
-        //    ValidationResult results = validations.Validate(loginEmployee);
-        //    if (results.IsValid)
-        //    {
-        //        var client = _httpClientFactory.CreateClient();
-
-        //        var jsonData = JsonConvert.SerializeObject(loginEmployee);
-        //        StringContent jsonEmployee = new(jsonData, Encoding.UTF8, "application/json");
-        //        var responseMessage = await client.PostAsync("http://localhost:5144/api/Auth/Login", jsonEmployee);
-
-        //        if (responseMessage.IsSuccessStatusCode)
-        //        {
-        //            return RedirectToAction("Index", "Announcement");
-        //        }
-        //        else
-        //        {
-        //            foreach (var item in results.Errors)
-        //            {
-        //                ModelState.AddModelError(item.PropertyName, item.ErrorMessage);
-        //            }
-        //        }
-        //    }
-        //    return View();
-        //}
         [HttpPost]
         public async Task<IActionResult> LoginEmployee(LoginEmployeeDto loginEmployee)
         {
@@ -138,7 +99,15 @@ namespace UI_Layer.Controllers.Admin
             }
             return View();
         }
-
+        public IActionResult LogoutEmployee()
+        {
+            HttpContext.Response.Cookies.Delete("AuthenticationToken");
+            return RedirectToAction("Index", "Announcement");
+        }
+        public IActionResult WeeklySchedule()
+        {
+            return View();
+        }
 
     }
 

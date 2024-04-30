@@ -11,7 +11,7 @@
 
     <div class="row">
         <div class="col-md-6">
-            <form  asp-controller="Announcement" asp-action="AddAnnouncement">
+            <form id="announcementForm">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                 <div class="form-group">
@@ -50,5 +50,46 @@
     </div>
 </div>
 
+@section Scripts {
+    <script>
+        // Announcement formunu submit etme işlemi
+        document.getElementById("announcementForm").addEventListener("submit", async function (event) {
+            event.preventDefault(); // Sayfanın yenilenmesini engelle
 
+            const formData = new FormData(this); // Form verilerini al
+            const announcementData = {
+                Title: formData.get("Title"),
+                Content: formData.get("Content"),
+                Date: formData.get("Date"),
+                TypeID: parseInt(formData.get("TypeID"))
+            };
 
+            try {
+                // Local Storage'dan token al
+                const token = localStorage.getItem("token");
+
+                // API'ye yeni duyuru ekleme isteği gönder
+                const response = await fetch("http://localhost:5144/api/Announcement", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify(announcementData)
+                });
+
+                if (!response.ok) {
+                    throw new Error("Duyuru ekleme başarısız");
+                }
+
+                // Başarılı yanıt alındıysa diğer işlemleri yapabilirsiniz
+                // Örneğin, yönlendirme
+
+                window.location.href = "/Announcement/Index"; // Örnek olarak Announcement sayfasına yönlendirme
+            } catch (error) {
+                console.error("Duyuru ekleme hatası:", error);
+                // Hata işleme
+            }
+        });
+    </script>
+}

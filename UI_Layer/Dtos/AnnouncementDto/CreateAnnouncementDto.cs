@@ -18,5 +18,6 @@ namespace UI_Layer.Dtos.AnnouncementDto
         public DateTime? Date { get; set; }
         [Required(ErrorMessage = "Lütfen tip seçiniz!")]
         public int? TypeID { get; set; }
+        public bool Status { get; set; }
     }
 }

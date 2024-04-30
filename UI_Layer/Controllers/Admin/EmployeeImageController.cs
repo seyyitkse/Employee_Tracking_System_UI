@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace UI_Layer.Controllers
+namespace UI_Layer.Controllers.Admin
 {
-    public class HomeController : Controller
+    public class EmployeeImageController : Controller
     {
         public IActionResult Index()
         {

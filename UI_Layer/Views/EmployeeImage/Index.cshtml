@@ -1,0 +1,68 @@
+﻿@model EmployeeImageDto
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/AdminLayout/AdminLayout.cshtml";
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+    <style>
+        .form-group {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h3>Çalışana Resim Ekle</h3>
+        <form id="imageForm" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="image">Resim Seç</label>
+                <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Resim Ekle</button>
+        </form>
+    </div>
+
+    @section Scripts 
+    {
+        <script>
+            document.getElementById("imageForm").addEventListener("submit", async function(event) {
+                event.preventDefault(); // Formun normal submit işlemini engelle
+
+                const formData = new FormData(this); // Form verilerini al
+                const userId = "@Model"; // Çalışanın ID'sini al
+
+                try {
+                    // Local Storage'dan token al
+                    const token = localStorage.getItem("token");
+
+                    // API'ye resim ekleme isteği gönder
+                    const response = await fetch(`http://localhost:5144/api/UserImage/${userId}/images`, {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${token}`
+                        },
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Resim ekleme başarısız");
+                    }
+
+                    // Başarılı yanıt alındıysa yönlendirme yapıyoruz
+                    window.location.href = "/Employee/Index";
+                } catch (error) {
+                    console.error("Resim ekleme hatası:", error);
+                    // Hata işleme
+                }
+            });
+        </script>
+    }
+</body>
+</html>
+
