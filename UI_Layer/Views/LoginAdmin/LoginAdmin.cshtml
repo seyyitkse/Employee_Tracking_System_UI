@@ -1,0 +1,114 @@
+﻿@model LoginAdminDto
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login</title>
+    <link rel="stylesheet" href="~/Project_Files/css/styles.min.css" />
+    <link rel="icon" href="~/Project_Files/logos/favicon.ico" />
+</head>
+
+<body>
+    <!--  Body Wrapper -->
+    <div class="page-wrapper" id="main-wrapper">
+        <div class="position-relative overflow-hidden radial-gradient min-vh-100 d-flex align-items-center justify-content-center">
+            <div class="d-flex align-items-center justify-content-center w-100">
+                <div class="row justify-content-center w-100">
+                    <div class="col-md-8 col-lg-6 col-xxl-3">
+                        <div class="card mb-0">
+                            <div class="card-body">
+                                <a href="#" class="text-nowrap logo-img text-center d-block py-3 w-100">
+                                    <img src="~/Project_Files/logos/PersoneLock-banner.png" width="180" alt="40">
+                                </a>
+                                <p class="text-center">Personel Takip Sistemi</p>
+                                <form id="loginForm" method="post">
+                                    <div asp-validation-summary="All"></div>
+                                    <div class="mb-3">
+                                        <label for="exampleInputEmail1" class="form-label">Mail</label>
+                                        <input asp-for="Email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                                        <span asp-validation-for="Email"></span>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="exampleInputPassword1" class="form-label">Şifre</label>
+                                        <input asp-for="Password" class="form-control" id="exampleInputPassword1" type="password">
+                                        <span asp-validation-for="Password"></span>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-between mb-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input primary" type="checkbox" value="" id="flexCheckChecked" checked>
+                                            <label class="form-check-label text-dark" for="flexCheckChecked">
+                                                Beni Hatırla
+                                            </label>
+                                        </div>
+                                        <a class="text-primary fw-bold" href="./index.html">Forgot Password ?</a>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">Giriş Yap</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/Project-Files/js/jquery/dist/jquery.min.js"></script>
+    <script src="~/Project-Files/js/bootstrap.bundle.min.js"></script>
+
+    Tabii, kodunuzu entegre etmek için gerekli değişiklikleri yapabilirim. İşte kodunuzun giriş sayfasındaki JavaScript kısmına entegre edilmiş bir örnek:
+
+    html
+    Copy code
+    <script>
+        // Login formunu submit etme işlemi
+        document.getElementById("loginForm").addEventListener("submit", async function (event) {
+            event.preventDefault(); // Sayfanın yenilenmesini engelleme işlemi
+
+            const formData = new FormData(this); // Form verilerini alma işlemi
+            const loginData = {
+                email: formData.get("Email"),
+                password: formData.get("Password")
+            };
+
+            try {
+                // API'ye login isteği gönder
+                const response = await fetch("https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/Auth/Login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(loginData)
+                });
+
+                if (!response.ok) {
+                    throw new Error("Login failed");
+                }
+
+                // Başarılı yanıt alındıysa token'ı alma işlemi
+                const responseData = await response.json();
+                const token = responseData.token;
+
+                // Token'ı tarayıcı çerezine ekleme işlemi
+                document.cookie = "AuthenticationToken=" + token + ";path=/"; // Çerez olarak eklenmesi gereken işlem
+
+                // Diğer işlemler (örneğin, yönlendirme)
+                window.location.href = "/Announcement/Index/"; // Örnek olarak Home sayfasına yönlendirme
+            } catch (error) {
+                console.error("Login error:", error);
+                // Hata işleme
+            }
+        });
+
+        // Çıkış işlemi: Token'ı çerezden sil
+        function logout() {
+            document.cookie = "AuthenticationToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            // Çıkış yaptıktan sonra kullanıcıyı giriş sayfasına yönlendir
+            window.location.href = "/login";
+        }
+    </script>
+</body>
+
+</html>
+
