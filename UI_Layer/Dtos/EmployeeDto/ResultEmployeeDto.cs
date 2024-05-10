@@ -6,6 +6,8 @@
         public string? Mail { get; set; }
         public string? Name { get; set; }
         public string? Surname { get; set; }
+        public string? normalizedEmail { get; set; }
+        public bool emailConfirmed { get; set; }
         public int DepartmentID{ get; set; }
     }
 }

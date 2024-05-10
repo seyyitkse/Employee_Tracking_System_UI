@@ -8,5 +8,14 @@ namespace UI_Layer.Controllers.HomeScreen
         {
             return View();
         }
+        public IActionResult Login()
+        {
+            return View();
+        }
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
     }
 }

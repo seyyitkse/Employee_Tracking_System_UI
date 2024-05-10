@@ -69,7 +69,7 @@
 
             try {
                 // API'ye login isteği gönder
-                const response = await fetch("https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/Auth/Login", {
+                const response = await fetch("http://localhost:27312/api/Auth/Login", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -85,16 +85,23 @@
                 const responseData = await response.json();
                 const token = responseData.token;
 
-                // Token'ı local storage'a kaydet
-                localStorage.setItem("token", token);
+                // Token'ı tarayıcı çerezine ekle
+                document.cookie = "AuthenticationToken=" + token + ";path=/"; // Çerez olarak eklenmesi gereken işlem
 
                 // Diğer işlemler (örneğin, yönlendirme)
-                window.location.href = "/EmployeeHome/Index/"; // Örnek olarak Home sayfasına yönlendirme
+                window.location.href = "/Announcement/Index/"; // Örnek olarak Home sayfasına yönlendirme
             } catch (error) {
                 console.error("Login error:", error);
                 // Hata işleme
             }
         });
+
+        // Çıkış işlemi: Token'ı çerezden sil
+        function logout() {
+            document.cookie = "AuthenticationToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            // Çıkış yaptıktan sonra kullanıcıyı giriş sayfasına yönlendir
+            window.location.href = "/login";
+        }
     </script>
 </body>
 

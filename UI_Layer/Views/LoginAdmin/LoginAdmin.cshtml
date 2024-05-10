@@ -1,4 +1,4 @@
-﻿@model LoginAdminDto
+﻿@model LoginEmployeeDto
 
 <!doctype html>
 <html lang="en">
@@ -56,17 +56,12 @@
     </div>
     <script src="~/Project-Files/js/jquery/dist/jquery.min.js"></script>
     <script src="~/Project-Files/js/bootstrap.bundle.min.js"></script>
-
-    Tabii, kodunuzu entegre etmek için gerekli değişiklikleri yapabilirim. İşte kodunuzun giriş sayfasındaki JavaScript kısmına entegre edilmiş bir örnek:
-
-    html
-    Copy code
     <script>
         // Login formunu submit etme işlemi
         document.getElementById("loginForm").addEventListener("submit", async function (event) {
-            event.preventDefault(); // Sayfanın yenilenmesini engelleme işlemi
+            event.preventDefault(); // Sayfanın yenilenmesini engelle
 
-            const formData = new FormData(this); // Form verilerini alma işlemi
+            const formData = new FormData(this); // Form verilerini al
             const loginData = {
                 email: formData.get("Email"),
                 password: formData.get("Password")
@@ -74,7 +69,7 @@
 
             try {
                 // API'ye login isteği gönder
-                const response = await fetch("https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/Auth/Login", {
+                const response = await fetch("http://localhost:27312/api/Auth/Login", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -86,11 +81,11 @@
                     throw new Error("Login failed");
                 }
 
-                // Başarılı yanıt alındıysa token'ı alma işlemi
+                // Başarılı yanıt alındıysa token'ı al
                 const responseData = await response.json();
                 const token = responseData.token;
 
-                // Token'ı tarayıcı çerezine ekleme işlemi
+                // Token'ı tarayıcı çerezine ekle
                 document.cookie = "AuthenticationToken=" + token + ";path=/"; // Çerez olarak eklenmesi gereken işlem
 
                 // Diğer işlemler (örneğin, yönlendirme)
@@ -108,7 +103,7 @@
             window.location.href = "/login";
         }
     </script>
+
 </body>
 
 </html>
-
