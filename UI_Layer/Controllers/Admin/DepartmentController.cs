@@ -1,4 +1,5 @@
 ﻿using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
@@ -6,7 +7,6 @@ using System.Text;
 using UI_Layer.Dtos.AnnouncementDto;
 using UI_Layer.Dtos.DepartmentDto;
 using UI_Layer.Models;
-using UI_Layer.ValidationRules.Announcement;
 using UI_Layer.ValidationRules.Department;
 
 namespace UI_Layer.Controllers.Admin

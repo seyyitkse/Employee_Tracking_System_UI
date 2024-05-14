@@ -1,11 +1,9 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
-
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
-options.Cookie.HttpOnly = true;
-options.Cookie.IsEssential = true;
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
@@ -29,7 +27,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseSession();
+//app.UseSession();
 app.UseRouting();
 app.UseCookiePolicy();
 app.UseAuthentication();
@@ -38,6 +36,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Employee}/{action=LoginEmployee}/{id?}");
+    pattern: "{controller=HomeScreen}/{action=HomePage}/{id?}");
 
 app.Run();

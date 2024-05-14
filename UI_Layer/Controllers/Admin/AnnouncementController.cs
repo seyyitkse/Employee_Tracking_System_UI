@@ -25,7 +25,7 @@ namespace UI_Layer.Controllers.Admin
             var accessToken = HttpContext.Request.Cookies["AuthenticationToken"];
             var client = _httpClientFactory.CreateClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            var responseMessage = await client.GetAsync("http://localhost:5144/api/Announcement");
+            var responseMessage = await client.GetAsync("http://localhost:27312/api/Announcement");
             if (responseMessage.IsSuccessStatusCode)
             {
                 var jsonData = await responseMessage.Content.ReadAsStringAsync();
@@ -51,7 +51,7 @@ namespace UI_Layer.Controllers.Admin
                 var jsonData = JsonConvert.SerializeObject(newAnnouncement);
 
                 StringContent jsonAnnouncement = new(jsonData, Encoding.UTF8, "application/json");
-                var responseMessage = await client.PostAsync("http://localhost:5144/api/Announcement", jsonAnnouncement);
+                var responseMessage = await client.PostAsync("http://localhost:27312/api/Announcement", jsonAnnouncement);
                 if (responseMessage.IsSuccessStatusCode)
                 {
                     var responseBody = await responseMessage.Content.ReadAsStringAsync();

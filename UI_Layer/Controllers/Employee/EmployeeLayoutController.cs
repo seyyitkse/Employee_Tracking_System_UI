@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace UI_Layer.Controllers.Admin
+namespace UI_Layer.Controllers.Employee
 {
-    public class AdminLayoutController : Controller
+    public class EmployeeLayoutController : Controller
     {
-        public IActionResult AdminLayout()
+        public IActionResult EmployeeLayout()
         {
             return View();
         }

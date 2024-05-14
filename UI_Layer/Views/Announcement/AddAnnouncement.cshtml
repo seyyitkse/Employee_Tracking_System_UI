@@ -52,11 +52,10 @@
 
 @section Scripts {
     <script>
-        // Announcement formunu submit etme işlemi
         document.getElementById("announcementForm").addEventListener("submit", async function (event) {
-            event.preventDefault(); // Sayfanın yenilenmesini engelle
+            event.preventDefault();
 
-            const formData = new FormData(this); // Form verilerini al
+            const formData = new FormData(this);
             const announcementData = {
                 Title: formData.get("Title"),
                 Content: formData.get("Content"),
@@ -65,15 +64,12 @@
             };
 
             try {
-                // Local Storage'dan token al
-                const token = localStorage.getItem("token");
-
-                // API'ye yeni duyuru ekleme isteği gönder
                 const response = await fetch("http://localhost:5144/api/Announcement", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
+                        "Authorization": `Bearer ${sessionStorage.getItem("token")}`, // Token sessionStorage'dan alıyorum
+                        "Ocp-Apim-Subscription-Key": "b6e696976de349e5be3c0cff0e782ec2" // Abonelik anahtarı
                     },
                     body: JSON.stringify(announcementData)
                 });
@@ -82,14 +78,11 @@
                     throw new Error("Duyuru ekleme başarısız");
                 }
 
-                // Başarılı yanıt alındıysa diğer işlemleri yapabilirsiniz
-                // Örneğin, yönlendirme
-
-                window.location.href = "/Announcement/Index"; // Örnek olarak Announcement sayfasına yönlendirme
+                window.location.href = "/Announcement/Index";
             } catch (error) {
                 console.error("Duyuru ekleme hatası:", error);
-                // Hata işleme
             }
         });
     </script>
 }
+

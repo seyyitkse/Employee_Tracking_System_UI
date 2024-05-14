@@ -18,7 +18,7 @@ namespace UI_Layer.Controllers.Admin
         public async Task <IActionResult> Index()
         {
             var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync("http://localhost:5144/api/Employee");
+            var responseMessage = await client.GetAsync("http://localhost:27312/api/Employee");
             if (responseMessage.IsSuccessStatusCode)
             {
                 var jsonData = await responseMessage.Content.ReadAsStringAsync();
@@ -42,10 +42,10 @@ namespace UI_Layer.Controllers.Admin
                 var client = _httpClientFactory.CreateClient();
                 var jsonData = JsonConvert.SerializeObject(newEmployee);
                 StringContent jsonEmployee = new(jsonData, Encoding.UTF8, "application/json");
-                var responseMessage = await client.PostAsync("http://localhost:5144/api/Auth/Register", jsonEmployee);
+                var responseMessage = await client.PostAsync("http://localhost:27312/api/Employee", jsonEmployee);
                 if (responseMessage.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("Index", "Announcement");
+                    return RedirectToAction("AdminHomePage", "AdminHome");
                 }
                 else
                 {
@@ -56,57 +56,28 @@ namespace UI_Layer.Controllers.Admin
                 }
             }
             return View();
-        }
-        [HttpGet]
-        public IActionResult LoginEmployee()
-        {
-            return View();
-        }
-        [HttpPost]
-        public async Task<IActionResult> LoginEmployee(LoginEmployeeDto loginEmployee)
-        {
-            EmployeeLoginValidator validations = new EmployeeLoginValidator();
-            ValidationResult results = validations.Validate(loginEmployee);
-            if (results.IsValid)
-            {
-                var client = _httpClientFactory.CreateClient();
-
-                var jsonData = JsonConvert.SerializeObject(loginEmployee);
-                StringContent jsonEmployee = new(jsonData, Encoding.UTF8, "application/json");
-                var responseMessage = await client.PostAsync("http://localhost:5144/api/Auth/Login", jsonEmployee);
-
-                if (responseMessage.IsSuccessStatusCode)
-                {
-                    var tokenResponse = await responseMessage.Content.ReadAsStringAsync();
-                    var tokenObject = JsonConvert.DeserializeObject<dynamic>(tokenResponse);
-                    var token = tokenObject.Token;
-
-                    // Tokenı local storage'a kaydet
-                    if (token != null)
-                    {
-                        // Tarayıcıya çerez olarak eklenmesi gereken işlemler
-                        HttpContext.Response.Cookies.Append("AuthenticationToken", token);
-                    }
-                    return RedirectToAction("Index", "Announcement");
-                }
-                else
-                {
-                    foreach (var item in results.Errors)
-                    {
-                        ModelState.AddModelError(item.PropertyName, item.ErrorMessage);
-                    }
-                }
-            }
-            return View();
-        }
-        public IActionResult LogoutEmployee()
-        {
-            HttpContext.Response.Cookies.Delete("AuthenticationToken");
-            return RedirectToAction("Index", "Announcement");
         }
         public IActionResult WeeklySchedule()
         {
             return View();
+        }
+        [HttpGet]
+        public async Task<IActionResult> EmployeeSchedule()
+        {
+                var client = _httpClientFactory.CreateClient();
+                var responseMessage = await client.GetAsync("http://localhost:27312/api/ScheduleUser"); // API_URL'nin doğru bir şekilde ayarlanması gerekiyor.
+                if (responseMessage.IsSuccessStatusCode)
+                {
+                    var jsonData = await responseMessage.Content.ReadAsStringAsync();
+                    var events = JsonConvert.DeserializeObject<List<ScheduleEmployeeDto>>(jsonData);
+                    return View(events);
+                }
+                else
+                {
+                    // API'den veri alınamazsa uygun bir hata mesajı döndürebilirsiniz.
+                    return View();
+                }
+       
         }
 
     }
