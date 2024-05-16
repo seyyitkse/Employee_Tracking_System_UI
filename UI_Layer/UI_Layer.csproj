@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageIcon>favicon-png (1).png</PackageIcon>
+    <ApplicationIcon>wwwroot\Project_Files\logos\favicon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
