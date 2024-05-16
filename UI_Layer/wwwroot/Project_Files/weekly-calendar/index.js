@@ -12,14 +12,17 @@ if (id !== null) {
             return response.json();
         })
         .then(schedule => {
-            const eventArray = schedule.map(event => {
-                return {
-                    id: event.scheduleID,
-                    eventName: event.description,
-                    dateFrom: new Date(event.starttime).getTime(),
-                    dateTo: new Date(event.endtime).getTime()
-                };
-            });
+            let eventArray = [];
+            if (schedule.length > 0) {
+                eventArray = schedule.map(event => {
+                    return {
+                        id: event.scheduleID,
+                        eventName: event.description,
+                        dateFrom: new Date(event.starttime).getTime(),
+                        dateTo: new Date(event.endtime).getTime()
+                    };
+                });
+            }
 
             new Calendar(eventArray);
         })
