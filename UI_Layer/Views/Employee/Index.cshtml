@@ -29,9 +29,10 @@
                         <th scope="row">@item.Id</th>
                         <td>@item.Name @item.Surname</td>
                         <td>@item.Mail</td>
--                        <td>
+                        <td>
                             <a asp-action="EmployeeDetails" asp-controller="Employee" asp-route-id="@item.Id" class="btn btn-primary">Detay</a>
-                            <a href="#" class="btn btn-outline-danger" data-user-id="@item.Id">Çalışan Mesai</a>
+                            <a href="#" class="btn btn-outline-danger" data-user-id="@item.Id">Çalışan Mesai Görüntüle</a>
+                            <a href="#" class="btn btn-outline-primary" data-user-id="@item.Id" data-toggle="modal" data-target="#myModal">Çalışan Mesai Ekle</a>
                             <a asp-action="Index" asp-controller="EmployeeImage" asp-route-id="@item.Id" class="btn btn-info">Resim Ekle</a>
                         </td>
                     </tr>
@@ -41,6 +42,15 @@
         <br />
         <div class="mt-4">
             <a class="btn btn-success" asp-controller="Employee" asp-action="Register">Yeni Çalışan Oluştur</a>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal içeriği buraya gelecek -->
+            </div>
         </div>
     </div>
 
@@ -63,6 +73,77 @@
                     var userId = this.getAttribute('data-user-id'); // Kullanıcı kimliğini al
                     if (userId) {
                         window.location.href = "/Employee/EmployeeSchedule?id=" + userId; // Kullanıcı kimliğini EmployeeSchedule sayfasına yönlendir
+                    } else {
+                        console.error('No user ID specified');
+                    }
+                });
+            });
+        </script>
+
+        <script>
+            // Çalışan Mesai Ekle butonuna tıklandığında
+            document.querySelectorAll('.btn-outline-primary').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var userId = this.getAttribute('data-user-id'); // Kullanıcı kimliğini al
+                    if (userId) {
+                        // Form elemanlarını al
+                        // Kullanıcının idsini gizli şekilde aktarma 
+                        var formHTML = `
+                                        <h3>Çalışan Mesai Ekle</h3>
+                                        <form id="scheduleForm">
+                                            <label for="starttime">Başlangıç Zamanı:</label><br>
+                                            <input type="datetime-local" id="starttime" name="starttime"><br>
+                                            <label for="endtime">Bitiş Zamanı:</label><br>
+                                            <input type="datetime-local" id="endtime" name="endtime"><br>
+                                            <label for="description">Açıklama:</label><br>
+                                            <input type="text" id="description" name="description"><br><br>
+                                            <input type="hidden" id="userId" name="userId" value="${userId}">
+                                            <button type="submit">Kaydet</button>
+                                        </form>
+                                    `;
+
+                        // Modal içeriğini güncelle
+                        var modalContent = document.getElementById('myModal').querySelector('.modal-content');
+                        modalContent.innerHTML = formHTML;
+
+                        // Modalı göster
+                        $('#myModal').modal('show');
+
+                        // Form submit olduğunda
+                        document.getElementById('scheduleForm').addEventListener('submit', function (event) {
+                            event.preventDefault(); // Sayfa yenilemeyi engelle
+                            var starttime = new Date(document.getElementById('starttime').value).getTime(); // Unix zaman damgasına çevir
+                            var endtime = new Date(document.getElementById('endtime').value).getTime(); // Unix zaman damgasına çevir
+                            var description = document.getElementById('description').value;
+                            var userId = document.getElementById('userId').value; // Kullanıcı kimliğini al
+                            // API'ye istek gönder ve mesai ekle
+                            fetch(`http://localhost:27312/api/ScheduleUser/`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    starttime: starttime,
+                                    endtime: endtime,
+                                    description: description,
+                                    userId: userId
+                                })
+                            })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Network response was not ok');
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    console.log('Mesai ekleme başarılı:', data);
+                                    $('#myModal').modal('hide'); 
+                                })
+                                .catch(error => {
+                                    console.error('Mesai ekleme hatası:', error);
+                                    $('#myModal').modal('hide');
+                                });
+                        });
                     } else {
                         console.error('No user ID specified');
                     }
