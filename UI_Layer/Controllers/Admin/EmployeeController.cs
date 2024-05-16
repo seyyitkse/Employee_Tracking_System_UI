@@ -61,23 +61,39 @@ namespace UI_Layer.Controllers.Admin
         {
             return View();
         }
+        //[HttpGet]
+        //public async Task<IActionResult> EmployeeSchedule()
+        //{
+        //        var client = _httpClientFactory.CreateClient();
+        //        var responseMessage = await client.GetAsync("http://localhost:27312/api/ScheduleUser"); // API_URL'nin doğru bir şekilde ayarlanması gerekiyor.
+        //        if (responseMessage.IsSuccessStatusCode)
+        //        {
+        //            var jsonData = await responseMessage.Content.ReadAsStringAsync();
+        //            var events = JsonConvert.DeserializeObject<List<ScheduleEmployeeDto>>(jsonData);
+        //            return View(events);
+        //        }
+        //        else
+        //        {
+        //            // API'den veri alınamazsa uygun bir hata mesajı döndürebilirsiniz.
+        //            return View();
+        //        }
+
+        //}
         [HttpGet]
-        public async Task<IActionResult> EmployeeSchedule()
+        public async Task<IActionResult> EmployeeSchedule(int id)
         {
-                var client = _httpClientFactory.CreateClient();
-                var responseMessage = await client.GetAsync("http://localhost:27312/api/ScheduleUser"); // API_URL'nin doğru bir şekilde ayarlanması gerekiyor.
-                if (responseMessage.IsSuccessStatusCode)
-                {
-                    var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                    var events = JsonConvert.DeserializeObject<List<ScheduleEmployeeDto>>(jsonData);
-                    return View(events);
-                }
-                else
-                {
-                    // API'den veri alınamazsa uygun bir hata mesajı döndürebilirsiniz.
-                    return View();
-                }
-       
+            var client = _httpClientFactory.CreateClient();
+            var responseMessage = await client.GetAsync($"http://localhost:27312/api/ScheduleUser/{id}"); 
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                var jsonData = await responseMessage.Content.ReadAsStringAsync();
+                var events = JsonConvert.DeserializeObject<List<ScheduleEmployeeDto>>(jsonData);
+                return View(events);
+            }
+            else
+            {
+                return View();
+            }
         }
 
     }

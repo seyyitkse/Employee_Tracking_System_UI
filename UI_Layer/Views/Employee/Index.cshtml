@@ -31,8 +31,8 @@
                         <td>@item.Mail</td>
 -                        <td>
                             <a asp-action="EmployeeDetails" asp-controller="Employee" asp-route-id="@item.Id" class="btn btn-primary">Detay</a>
-                            <a asp-action="EmployeeSchedule" asp-controller="Employee" asp-route-id="@item.Id" class="btn btn-outline-danger">Çalışan Mesai</a>
-                            <a asp-action="Index"  asp-controller="EmployeeImage" asp-route-id="@item.Id" class="btn btn-info">Resim Ekle</a>
+                            <a href="#" class="btn btn-outline-danger" data-user-id="@item.Id">Çalışan Mesai</a>
+                            <a asp-action="Index" asp-controller="EmployeeImage" asp-route-id="@item.Id" class="btn btn-info">Resim Ekle</a>
                         </td>
                     </tr>
                 }
@@ -55,41 +55,20 @@
                 });
             });
         </script>
-        @* <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const employeeScheduleButton = document.getElementById('employeeScheduleButton');
-                const calendarContainer = document.getElementById('calendar-container');
 
-                employeeScheduleButton.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const url = employeeScheduleButton.getAttribute('href');
-                    fetch(url)
-                        .then(response => response.json())
-                        .then(data => {
-                            renderCalendar(data); // Verileri takvim bileşenine aktar
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                        });
+        <script>
+            // Çalışan Mesai butonuna tıklandığında
+            document.querySelectorAll('.btn-outline-danger').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var userId = this.getAttribute('data-user-id'); // Kullanıcı kimliğini al
+                    if (userId) {
+                        window.location.href = "/Employee/EmployeeSchedule?id=" + userId; // Kullanıcı kimliğini EmployeeSchedule sayfasına yönlendir
+                    } else {
+                        console.error('No user ID specified');
+                    }
                 });
-
-                function renderCalendar(scheduleData) {
-                    // Takvim bileşeni için HTML oluştur
-                    const calendarHTML = `
-                  <div class="calendar">
-                    <!-- Takvim içeriği buraya gelecek -->
-                  </div>
-                `;
-                    calendarContainer.innerHTML = calendarHTML;
-
-                    // Takvim içeriği oluşturulacak
-                    const calendar = document.querySelector('.calendar');
-                    // scheduleData'daki mesai bilgilerini kullanarak takvim içeriğini oluştur
-                    // Örneğin, scheduleData'daki her bir mesai girdisi için takvimde bir etkinlik oluşturabilirsiniz
-                }
             });
-
-        </script> *@
+        </script>
     }
 </body>
 </html>
