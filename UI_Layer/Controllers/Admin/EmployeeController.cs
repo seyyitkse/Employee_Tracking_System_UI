@@ -83,7 +83,7 @@ namespace UI_Layer.Controllers.Admin
         public async Task<IActionResult> EmployeeSchedule(int id)
         {
             var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"http://localhost:27312/api/ScheduleUser/{id}"); 
+            var responseMessage = await client.GetAsync($"https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/ScheduleUser/{id}"); 
             if (responseMessage.IsSuccessStatusCode)
             {
                 var jsonData = await responseMessage.Content.ReadAsStringAsync();

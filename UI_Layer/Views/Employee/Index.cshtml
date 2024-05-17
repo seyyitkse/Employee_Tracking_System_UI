@@ -27,8 +27,8 @@
                 {
                     <tr>
                         <th scope="row">@item.Id</th>
-                        <td>@item.Name @item.Surname</td>
-                        <td>@item.Mail</td>
+                        <td>@item.FirstName @item.Lastname</td>
+                        <td>@item.Username</td>
                         <td>
                             <a asp-action="EmployeeDetails" asp-controller="Employee" asp-route-id="@item.Id" class="btn btn-primary">Detay</a>
                             <a href="#" class="btn btn-outline-danger" data-user-id="@item.Id">Çalışan Mesai Görüntüle</a>

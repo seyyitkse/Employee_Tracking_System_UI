@@ -1,8 +1,60 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/EmployeeLayout/EmployeeLayout.cshtml";
 }
 
-<h1>Employee Home Page</h1>
+<!DOCTYPE html>
+<html>
 
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Calendar</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="~/Project_Files/weekly-calendar/index.css">
+</head>
+
+<body>
+    <div class="calendar-container" id="calendar-container">
+        <br>
+        <h3 style="font-size:2vw;font-family: Arial, Helvetica, sans-serif;">Personel Mesai Takip Sayfası</h3>
+        <br>
+        <div class="calendar-header" id="calendar-header">
+            <div class="calendar-title" id="calendar-title"></div>
+            <div class="calendar-actions" id="calendar-actions">
+                <button class="calendar-action-button" id="calendar-action-button-prev">
+                    &lt;
+                </button>
+                <button class="calendar-action-button" id="calendar-action-button-today">
+                    Bugüne Dön
+                </button>
+                <button class="calendar-action-button" id="calendar-action-button-next">
+                    &gt;
+                </button>
+            </div>
+        </div>
+        <div class="calendar" id="calendar">
+            <div class="calendar-days" id="calendar-days"></div>
+            <div class="calendar-body" id="calendar-body"></div>
+        </div>
+    </div>
+    <script type="module" src="~/Project_Files/weekly-calendar/userschedule.js" async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+    <script>
+        var token = document.cookie.replace(/(?:(?:^|.*;\s*)jwt\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+
+        if (token) {
+            var decoded = jwt_decode(token);
+            var userId = decoded.UserID;
+
+            var calendarContainer = document.getElementById('calendar-container');
+            calendarContainer.dataset.userId = userId;
+            calendarContainer.dataset.token = token;
+        } else {
+            console.error('No token found');
+        }
+    </script>
+</body>
+
+</html>

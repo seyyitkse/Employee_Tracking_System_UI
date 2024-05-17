@@ -12,7 +12,6 @@
 </head>
 
 <body>
-    <!--  Body Wrapper -->
     <div class="page-wrapper" id="main-wrapper">
         <div class="position-relative overflow-hidden radial-gradient min-vh-100 d-flex align-items-center justify-content-center">
             <div class="d-flex align-items-center justify-content-center w-100">
@@ -57,18 +56,16 @@
     <script src="~/Project-Files/js/jquery/dist/jquery.min.js"></script>
     <script src="~/Project-Files/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Login formunu submit etme işlemi
         document.getElementById("loginForm").addEventListener("submit", async function (event) {
-            event.preventDefault(); // Sayfanın yenilenmesini engelle
+            event.preventDefault();
 
-            const formData = new FormData(this); // Form verilerini al
+            const formData = new FormData(this);
             const loginData = {
                 email: formData.get("Email"),
                 password: formData.get("Password")
             };
 
             try {
-                // API'ye login isteği gönder
                 const response = await fetch("http://localhost:27312/api/Auth/Login", {
                     method: "POST",
                     headers: {
@@ -81,25 +78,19 @@
                     throw new Error("Login failed");
                 }
 
-                // Başarılı yanıt alındıysa token'ı al
                 const responseData = await response.json();
                 const token = responseData.token;
 
-                // Token'ı tarayıcı çerezine ekle
-                document.cookie = "AuthenticationToken=" + token + ";path=/"; // Çerez olarak eklenmesi gereken işlem
+                document.cookie = "jwt=" + token + ";path=/";
 
-                // Diğer işlemler (örneğin, yönlendirme)
-                window.location.href = "/Announcement/Index/"; // Örnek olarak Home sayfasına yönlendirme
+                window.location.href = "/EmployeeHome/Index/";
             } catch (error) {
                 console.error("Login error:", error);
-                // Hata işleme
             }
         });
 
-        // Çıkış işlemi: Token'ı çerezden sil
         function logout() {
-            document.cookie = "AuthenticationToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-            // Çıkış yaptıktan sonra kullanıcıyı giriş sayfasına yönlendir
+            document.cookie = "jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             window.location.href = "/login";
         }
     </script>
