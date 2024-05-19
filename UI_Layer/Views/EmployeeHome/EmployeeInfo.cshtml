@@ -1,0 +1,93 @@
+﻿@model UI_Layer.Dtos.EmployeeDto.ResultEmployeeDto
+
+@{
+    ViewData["Title"] = "EmployeeInfo";
+    Layout = "~/Views/EmployeeLayout/EmployeeLayout.cshtml";
+}
+
+<h1>EmployeeInfo</h1>
+
+<div>
+    <h4>ResultEmployeeDto</h4>
+    <hr />
+    <dl class="row" id="employee-info">
+        <dt class="col-sm-2">
+            Id
+        </dt>
+        <dd class="col-sm-10" id="employee-id">
+            Loading...
+        </dd>
+        <dt class="col-sm-2">
+            Username
+        </dt>
+        <dd class="col-sm-10" id="employee-username">
+            Loading...
+        </dd>
+        <dt class="col-sm-2">
+            First Name
+        </dt>
+        <dd class="col-sm-10" id="employee-firstname">
+            Loading...
+        </dd>
+        <dt class="col-sm-2">
+            Last Name
+        </dt>
+        <dd class="col-sm-10" id="employee-lastname">
+            Loading...
+        </dd>
+        <dt class="col-sm-2">
+            Department ID
+        </dt>
+        <dd class="col-sm-10" id="employee-departmentid">
+            Loading...
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Index">Ana Sayfaya Dön</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", async function () {
+        var token = document.cookie.replace(/(?:(?:^|.*;\s*)jwt\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+
+        if (token) {
+            var decoded = jwt_decode(token);
+            var userId = decoded.UserID;
+
+            if (userId) {
+                try {
+                    const response = await fetch(`http://localhost:27312/api/Employee/${userId}`, {
+                        method: "GET",
+                        headers: {
+                            "Authorization": `Bearer ${token}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const employee = await response.json();
+
+                        document.getElementById('employee-id').textContent = employee.id;
+                        document.getElementById('employee-username').textContent = employee.userName;
+                        document.getElementById('employee-firstname').textContent = employee.firstName;
+                        document.getElementById('employee-lastname').textContent = employee.lastName;
+                        document.getElementById('employee-departmentid').textContent = employee.departmentID;
+                    } else {
+                        console.error('Failed to fetch employee data');
+                        document.getElementById('employee-info').textContent = "Failed to load employee data.";
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    document.getElementById('employee-info').textContent = "Error loading employee data.";
+                }
+            } else {
+                console.error('User ID not found in token');
+                document.getElementById('employee-info').textContent = "User ID not found.";
+            }
+        } else {
+            console.error('No token found');
+            document.getElementById('employee-info').textContent = "No token found.";
+        }
+    });
+</script>

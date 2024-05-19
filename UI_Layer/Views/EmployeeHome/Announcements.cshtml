@@ -1,0 +1,55 @@
+﻿@model List<ResultAnnouncementDto>
+@{
+    ViewData["Title"] = "Announcements";
+    Layout = "~/Views/EmployeeLayout/EmployeeLayout.cshtml";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements</title>
+    <link rel="stylesheet" href="~/Project_Files/css/styles.min.css" />
+    <style>
+        .card {
+            margin: auto;
+        }
+
+        .timeline-widget {
+            padding-left: 0;
+        }
+
+        .timeline-item {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8 d-flex align-items-stretch">
+                <div class="card w-100">
+                    <div class="card-body p-4">
+                        <div class="mb-4">
+                            <h5 class="card-title fw-semibold">Son Duyurular</h5>
+                        </div>
+                        <ul class="timeline-widget mb-0 position-relative mb-n5">
+                            @foreach (var item in Model)
+                            {
+                                <li class="timeline-item d-flex position-relative overflow-hidden">
+                                    <div class="timeline-time text-dark flex-shrink-0 text-end">@item.Date.ToShortDateString()</div>
+                                    <div class="timeline-badge-wrap d-flex flex-column align-items-center">
+                                        <span class="timeline-badge border-2 border border-primary flex-shrink-0 my-8"></span>
+                                        <span class="timeline-badge-border d-block flex-shrink-0"></span>
+                                    </div>
+                                    <div class="timeline-desc fs-3 text-dark mt-n1"><b>@item.Title</b> <br /> @item.Content</div>
+                                </li>
+                            }        
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
