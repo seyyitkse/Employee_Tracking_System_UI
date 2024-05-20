@@ -6,7 +6,7 @@
             <span class="hide-menu">Giriş</span>
         </li>
         <li class="sidebar-item">
-            <a class="sidebar-link" href="/AdminHome/AdminHomePage/" aria-expanded="false">
+            <a class="sidebar-link" asp-action="AdminHome" asp-controller="AdminHomePage" aria-expanded="false">
                 <span>
                     <i class="ti ti-dashboard"></i>
                 </span>
@@ -20,7 +20,7 @@
             <span class="hide-menu">Kullanıcı İşlemleri</span>
         </li>
         <li class="sidebar-item">
-            <a class="sidebar-link" href="/Employee/Index/" aria-expanded="false">
+            <a class="sidebar-link" asp-action="Index" asp-controller="Employee" aria-expanded="false">
                 <span>
                     <i class="ti ti-users"></i>
                 </span>
@@ -28,7 +28,7 @@
             </a>
         </li>
         <li class="sidebar-item">
-            <a class="sidebar-link" href="/Employee/RegisterEmployee/" aria-expanded="false">
+            <a class="sidebar-link" asp-action="RegisterEmployee" asp-controller="Employee" aria-expanded="false">
                 <span>
                     <i class="ti ti-users"></i>
                 </span>
@@ -41,7 +41,7 @@
             <span class="hide-menu">Duyuru İşlemleri</span>
         </li>
         <li class="sidebar-item">
-            <a class="sidebar-link" href="/Announcement/Index/" aria-expanded="false">
+            <a class="sidebar-link" asp-action="Index" asp-controller="Announcement" aria-expanded="false">
                 <span>
                     <i class="ti ti-bell"></i>
                 </span>
@@ -49,7 +49,7 @@
             </a>
         </li>
         <li class="sidebar-item">
-            <a class="sidebar-link" href="/Announcement/AddAnnouncement/" aria-expanded="false">
+            <a class="sidebar-link" asp-action="AddDepartment" asp-controller="Department" aria-expanded="false">
                 <span>
                     <i class="ti ti-bell"></i>
                 </span>
@@ -61,7 +61,7 @@
             <span class="hide-menu">Departman İşlemleri</span>
         </li>
         <li class="sidebar-item">
-            <a class="sidebar-link" href="/Department/Index/" aria-expanded="false">
+            <a class="sidebar-link" asp-action="DepartmentList" asp-controller="Department" aria-expanded="false">
                 <span>
                     <i class="ti ti-bell"></i>
                 </span>
@@ -82,11 +82,11 @@
             <span class="hide-menu">Diğer İşlemler</span>
         </li>
         <li class="sidebar-item">
-            <a class="sidebar-link" href="./authentication-login.html" aria-expanded="false">
+            <a class="sidebar-link" asp-action="LogoutAdmin" asp-controller="AdmibHome" aria-expanded="false">
                 <span>
                     <i class="ti ti-login"></i>
                 </span>
-                <span class="hide-menu">Logout</span>
+                <span class="hide-menu">Çıkış Yap</span>
             </a>
         </li>
     </ul>

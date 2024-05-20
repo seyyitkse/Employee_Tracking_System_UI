@@ -1,10 +1,10 @@
 ﻿@using UI_Layer.Dtos.DepartmentDto
 @model List<ResultDepartmentDto>
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "DepartmentList";
     Layout = "~/Views/AdminLayout/AdminLayout.cshtml";
 }
+
 
 <!DOCTYPE html>
 
@@ -27,8 +27,8 @@
                     <td>@item.Name</td>
                     <td>@(item.Status ? "Aktif" : "Kapatıldı")</td>
                     <td>
-@*                         <a asp-action="AnnouncementDetails" asp-controller="Announcement" asp-route-id="@item.ID" class="btn btn-primary">Departmanı Kapat</a>
- *@                        <a asp-action="AnnouncementDetails" asp-controller="Department" asp-route-id="@item.DepartmentID" class="btn btn-primary">Detay</a>
+                        @*                         <a asp-action="AnnouncementDetails" asp-controller="Announcement" asp-route-id="@item.ID" class="btn btn-primary">Departmanı Kapat</a>
+                    *@                        <a asp-action="AnnouncementDetails" asp-controller="Department" asp-route-id="@item.DepartmentID" class="btn btn-primary">Detay</a>
                     </td>
                 </tr>
             }
@@ -41,4 +41,6 @@
     </div>
 </div>
 </html>
+
+
 

@@ -21,11 +21,11 @@ namespace UI_Layer.Controllers.Admin
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> DepartmentList()
         {
-            var accessToken = HttpContext.Request.Cookies["AuthenticationToken"];
+            //var accessToken = HttpContext.Request.Cookies["AuthenticationToken"];
             var client = _httpClientFactory.CreateClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             var responseMessage = await client.GetAsync("http://localhost:5144/api/Department");
             if (responseMessage.IsSuccessStatusCode)
             {
