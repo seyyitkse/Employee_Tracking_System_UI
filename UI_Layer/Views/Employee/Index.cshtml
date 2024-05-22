@@ -41,7 +41,7 @@
         </table>
         <br />
         <div class="mt-4">
-            <a class="btn btn-success" asp-controller="Employee" asp-action="Register">Yeni Çalışan Oluştur</a>
+            <a class="btn btn-success" asp-controller="Employee" asp-action="RegisterEmployee">Yeni Çalışan Oluştur</a>
         </div>
     </div>
 
@@ -117,7 +117,7 @@
                             var description = document.getElementById('description').value;
                             var userId = document.getElementById('userId').value; // Kullanıcı kimliğini al
                             // API'ye istek gönder ve mesai ekle
-                            fetch(`http://localhost:27312/api/ScheduleUser/`, {
+                            fetch(`https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/api/ScheduleUser/`, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'

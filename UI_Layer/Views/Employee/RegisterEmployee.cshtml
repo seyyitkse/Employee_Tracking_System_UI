@@ -5,40 +5,166 @@
     Layout = "~/Views/AdminLayout/AdminLayout.cshtml";
 }
 <div class="container">
-
-<h1 class="mt-5">Yeni Çalışan Ekle</h1>
-
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="RegisterEmployee">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <br />
-                <label asp-for="Email" class="control-label">Mail:</label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <br />
-                <label asp-for="Password" class="control-label">Şifreyi giriniz:</label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <br />
-                <label asp-for="ConfirmPassword" class="control-label">Şifreyi tekrar giriniz:</label>
-                <input asp-for="ConfirmPassword" class="form-control" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <br />
-                <input type="submit" value="Oluştur" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-outline-warning">Listeye Geri Dön</a>
-            </div>
-        </form>
+    <h1 class="mt-5">Yeni Çalışan Ekle</h1>
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <form id="registerEmployeeForm">
+                <div class="form-group">
+                    <br />
+                    <label for="Email" class="control-label">Mail:</label>
+                    <input id="Email" name="Email" class="form-control" />
+                    <span id="emailValidation" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <br />
+                    <label for="Password" class="control-label">Şifreyi giriniz:</label>
+                    <input id="Password" name="Password" class="form-control" type="password" />
+                    <span id="passwordValidation" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <br />
+                    <label for="ConfirmPassword" class="control-label">Şifreyi tekrar giriniz:</label>
+                    <input id="ConfirmPassword" name="ConfirmPassword" class="form-control" type="password" />
+                    <span id="confirmPasswordValidation" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <br />
+                    <label for="Name" class="control-label">Ad:</label>
+                    <input id="Name" name="Name" class="form-control" />
+                    <span id="nameValidation" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <br />
+                    <label for="Surname" class="control-label">Soyad:</label>
+                    <input id="Surname" name="Surname" class="form-control" />
+                    <span id="surnameValidation" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <br />
+                    <label for="DepartmanId" class="control-label">Departman:</label>
+                    <select id="DepartmanId" name="DepartmanId" class="form-control"></select>
+                    <span id="departmanValidation" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <br />
+                    <input type="submit" value="Oluştur" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-outline-warning">Listeye Geri Dön</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
-</div>
 
+@section Scripts
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", async function () {
+            await loadDepartments();
+        });
 
+        async function loadDepartments() {
+            try {
+                const response = await fetch("https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/Department");
+                const departments = await response.json();
+
+                const departmentSelect = document.getElementById("DepartmanId");
+                departments.forEach(department => {
+                    const option = document.createElement("option");
+                    option.value = department.id;
+                    option.text = department.name;
+                    departmentSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Departmanlar yüklenirken hata oluştu:", error);
+            }
+        }
+
+        document.getElementById("registerEmployeeForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const email = document.getElementById("Email").value;
+            const password = document.getElementById("Password").value;
+            const confirmPassword = document.getElementById("ConfirmPassword").value;
+            const name = document.getElementById("Name").value;
+            const surname = document.getElementById("Surname").value;
+            const departmanId = document.getElementById("DepartmanId").value;
+
+            const newEmployee = {
+                mail: email,
+                Password: password,
+                ConfirmPassword: confirmPassword,
+                firstName: name,
+                lastName: surname,
+                departmanID: parseInt(departmanId)
+            };
+
+            try {
+                const token = getCookie("AuthenticationToken");
+
+                if (!token) {
+                    throw new Error("Token bulunamadı");
+                }
+
+                const response = await fetch("https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/Auth/RegisterEmployee", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify(newEmployee)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    handleValidationErrors(errorData);
+                    throw new Error("Çalışan ekleme başarısız");
+                }
+
+                window.location.href = "/AdminHome/AdminHomePage";
+            } catch (error) {
+                console.error("Çalışan ekleme hatası:", error);
+            }
+        });
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        function handleValidationErrors(errors) {
+            const emailValidation = document.getElementById("emailValidation");
+            const passwordValidation = document.getElementById("passwordValidation");
+            const confirmPasswordValidation = document.getElementById("confirmPasswordValidation");
+            const nameValidation = document.getElementById("nameValidation");
+            const surnameValidation = document.getElementById("surnameValidation");
+            const departmanValidation = document.getElementById("departmanValidation");
+
+            emailValidation.textContent = "";
+            passwordValidation.textContent = "";
+            confirmPasswordValidation.textContent = "";
+            nameValidation.textContent = "";
+            surnameValidation.textContent = "";
+            departmanValidation.textContent = "";
+
+            if (errors && errors.Errors) {
+                errors.Errors.forEach(error => {
+                    if (error.PropertyName === "Email") {
+                        emailValidation.textContent = error.ErrorMessage;
+                    } else if (error.PropertyName === "Password") {
+                        passwordValidation.textContent = error.ErrorMessage;
+                    } else if (error.PropertyName === "ConfirmPassword") {
+                        confirmPasswordValidation.textContent = error.ErrorMessage;
+                    } else if (error.PropertyName === "Name") {
+                        nameValidation.textContent = error.ErrorMessage;
+                    } else if (error.PropertyName === "Surname") {
+                        surnameValidation.textContent = error.ErrorMessage;
+                    } else if (error.PropertyName === "DepartmanId") {
+                        departmanValidation.textContent = error.ErrorMessage;
+                    }
+                });
+            }
+        }
+    </script>
+}
