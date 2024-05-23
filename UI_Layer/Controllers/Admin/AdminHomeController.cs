@@ -14,7 +14,7 @@ namespace UI_Layer.Controllers.Admin
             // Remove the authentication token
             HttpContext.Response.Cookies.Delete("jwt");
             // Redirect to the login page
-            return RedirectToAction("LoginAdmin", "LoginAdmin");
+            return RedirectToAction("HomePage", "HomeScreen");
         }
     }
 }
