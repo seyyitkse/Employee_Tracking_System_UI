@@ -10,6 +10,8 @@ using UI_Layer.ValidationRules.Admin;
 using System.IdentityModel.Tokens.Jwt;
 using UI_Layer.Dtos.EmployeeDto;
 using UI_Layer.Authorization;
+using Newtonsoft.Json.Linq;
+using Humanizer;
 
 namespace UI_Layer.Controllers.Login
 {
@@ -47,27 +49,40 @@ namespace UI_Layer.Controllers.Login
                 System.Diagnostics.Debug.WriteLine("Error: Response data is null or empty.");
                 return RedirectToAction("Error");
             }
-
+            
             try
             {
                 // Deserialize the JSON response
                 var responseData = JsonConvert.DeserializeObject<AuthResponse>(responseDataJson);
-                var token = responseData?.Token;
+                var tokenValue = responseData?.Token;
 
-                if (string.IsNullOrEmpty(token))
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var jwtToken = tokenHandler.ReadToken(tokenValue) as JwtSecurityToken;
+                var roleClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+
+                if (string.IsNullOrEmpty(tokenValue))
                 {
                     throw new Exception("Token not found in the response.");
                 }
-
+                string userRole = roleClaim.Value;
                 // Store the token in a cookie
-                Response.Cookies.Append("AuthenticationToken", token, new CookieOptions
+                Response.Cookies.Append("AuthenticationToken", tokenValue, new CookieOptions
                 {
                     HttpOnly = true,
                     Secure = true,
                     SameSite = SameSiteMode.Strict,
                 });
 
-                return RedirectToAction("AdminHomePage", "AdminHome");
+                // Use role information to redirect user
+                if (userRole == "Admin")
+                {
+                    return RedirectToAction("AdminHomePage", "AdminHome");
+                }
+                else
+                {
+                    // Redirect non-admin users to a different page
+                    return RedirectToAction("EmployeeHomePage", "EmployeeHome");
+                }
             }
             catch (JsonException ex)
             {

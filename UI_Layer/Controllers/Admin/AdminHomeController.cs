@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace UI_Layer.Controllers.Admin
 {
     public class AdminHomeController : Controller
     {
+        [Authorize(Policy = "AdminPolicy")]
         public IActionResult AdminHomePage()
         {
             return View();
@@ -11,9 +13,7 @@ namespace UI_Layer.Controllers.Admin
         [HttpGet]
         public IActionResult LogoutEmployee()
         {
-            // Remove the authentication token
-            HttpContext.Response.Cookies.Delete("jwt");
-            // Redirect to the login page
+            HttpContext.Response.Cookies.Delete("AuthenticationToken");
             return RedirectToAction("HomePage", "HomeScreen");
         }
     }
