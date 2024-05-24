@@ -1,8 +1,4 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
 using UI_Layer.Authorization;
 
@@ -64,7 +60,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         .AddCookie(options =>
         {
             options.LoginPath = "/LoginAdmin/LoginAdmin";
-            options.AccessDeniedPath = "/HomeScreen/AccessDenied";
+            options.AccessDeniedPath = "/ErrorPage/AccessDenied";
         });
 
 builder.Services.AddAuthorization(options =>
@@ -85,7 +81,7 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-
+app.UseStatusCodePagesWithReExecute("/Error/{0}");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
@@ -95,6 +91,10 @@ app.Use(async (context, next) =>
     var token = context.Request.Cookies["AuthenticationToken"];
     if (!string.IsNullOrEmpty(token))
     {
+        if (context.Request.Headers.ContainsKey("Authorization"))
+        {
+            context.Request.Headers.Remove("Authorization");
+        }
         context.Request.Headers.Add("Authorization", "Bearer " + token);
     }
     await next();
