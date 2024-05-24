@@ -1,3 +1,11 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using UI_Layer.Authorization;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSession(options =>
 {
@@ -8,6 +16,61 @@ builder.Services.AddSession(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
 
+var jwtIssuer = builder.Configuration["AuthSettings:Issuer"];
+var jwtKey = builder.Configuration["AuthSettings:Key"];
+var jwtAudience = builder.Configuration["AuthSettings:Audience"];
+var key = Encoding.ASCII.GetBytes(jwtKey);
+
+//builder.Services.AddAuthentication(options =>
+//{
+//    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//})
+//.AddJwtBearer(options =>
+//{
+//    options.TokenValidationParameters = new TokenValidationParameters
+//    {
+//        ValidateIssuer = true,
+//        ValidateAudience = true,
+//        ValidateLifetime = true,
+//        ValidateIssuerSigningKey = true,
+//        ValidIssuer = jwtIssuer,
+//        ValidAudience = jwtAudience,
+//        //IssuerSigningKey = new SymmetricSecurityKey(key)
+//    };
+//})
+//.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+//{
+//    options.Events = new CookieAuthenticationEvents
+//    {
+//        OnValidatePrincipal = async context =>
+//        {
+//            var token = context.Request.Cookies["AuthenticationToken"];
+//            if (token != null)
+//            {
+//                var handler = new JwtSecurityTokenHandler();
+//                var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+
+//                if (jsonToken != null)
+//                {
+//                    var claimsIdentity = new ClaimsIdentity(jsonToken.Claims, "AuthenticationToken");
+//                    context.Principal = new ClaimsPrincipal(claimsIdentity);
+//                }
+//            }
+//        }
+//    };
+//});
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddCookie(options =>
+        {
+            options.LoginPath = "/LoginAdmin/LoginAdmin";
+            options.AccessDeniedPath = "/HomeScreen/AccessDenied";
+        });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
+});
 
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
@@ -15,24 +78,30 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
     options.MinimumSameSitePolicy = SameSiteMode.None;
 });
 
-builder.Services.AddAuthorization();
 var app = builder.Build();
-// Configure the HTTP request pipeline.
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-//app.UseSession();
 app.UseRouting();
 app.UseCookiePolicy();
+app.Use(async (context, next) =>
+{
+    var token = context.Request.Cookies["AuthenticationToken"];
+    if (!string.IsNullOrEmpty(token))
+    {
+        context.Request.Headers.Add("Authorization", "Bearer " + token);
+    }
+    await next();
+});
+app.UseMiddleware<ValidateTokenMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
-//app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

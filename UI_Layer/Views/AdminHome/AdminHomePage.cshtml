@@ -3,6 +3,15 @@
     ViewData["Title"] = "AdminHomePage";
     Layout = "~/Views/AdminLayout/AdminLayout.cshtml";
 }
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
 
-<h1>AdminHomePage</h1>
+@if ((await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)
+{
+    <h1>AdminHomePage</h1>
+}
+else
+{
+    <p>You do not have access to the admin page.</p>
+}
 
