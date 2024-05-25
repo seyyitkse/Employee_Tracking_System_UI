@@ -4,10 +4,12 @@
     ViewData["Title"] = "DepartmentList";
     Layout = "~/Views/AdminLayout/AdminLayout.cshtml";
 }
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
 
-
-<!DOCTYPE html>
-
+@if ((await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)
+{
+    <html>
 <div class="container-fluid mt-4">
     <h3>Departmanlar</h3>
     <table class="table table-bordered">
@@ -41,6 +43,13 @@
     </div>
 </div>
 </html>
+}
+else
+{
+    <p>You do not have access to the admin page.</p>
+}
+
+
 
 
 

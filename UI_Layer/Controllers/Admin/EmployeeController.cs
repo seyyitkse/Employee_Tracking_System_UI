@@ -1,4 +1,5 @@
 ﻿using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
@@ -29,17 +30,21 @@ namespace UI_Layer.Controllers.Admin
             return View();
         }
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult RegisterEmployee()
         {
             return View();
         }
+
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RegisterEmployee(CreateEmployeeDto newEmployee)
         {
             EmployeeRegisterValidator validations = new EmployeeRegisterValidator();
             ValidationResult results = validations.Validate(newEmployee);
             if (results.IsValid)
             {
+                var userRoles=User.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Role).Select(c => c.Value);
                 var accessToken = HttpContext.Request.Cookies["AuthenticationToken"];
                 var client = _httpClientFactory.CreateClient();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);

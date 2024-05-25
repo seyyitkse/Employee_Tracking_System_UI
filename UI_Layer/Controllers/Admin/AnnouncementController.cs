@@ -10,6 +10,9 @@ using UI_Layer.ValidationRules.Announcement;
 
 namespace UI_Layer.Controllers.Admin
 {
+
+    [Authorize(Policy = "AdminPolicy")]
+    [Route("/Announcement/{otherId}")]
     public class AnnouncementController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -25,7 +28,7 @@ namespace UI_Layer.Controllers.Admin
             var accessToken = HttpContext.Request.Cookies["AuthenticationToken"];
             var client = _httpClientFactory.CreateClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            var responseMessage = await client.GetAsync("http://localhost:27312/api/Announcement");
+            var responseMessage = await client.GetAsync("https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/Announcement");
             if (responseMessage.IsSuccessStatusCode)
             {
                 var jsonData = await responseMessage.Content.ReadAsStringAsync();
@@ -34,12 +37,14 @@ namespace UI_Layer.Controllers.Admin
             }
             return View();
         }
-        [HttpGet]
+
+        [HttpGet("Add")]
         public IActionResult AddAnnouncement()
         {
             return View();
         }
-        [HttpPost]
+
+        [HttpPost("Add")]
         public async Task<IActionResult> AddAnnouncement(CreateAnnouncementDto newAnnouncement)
         {
             CreateAnnouncementValidator validations = new CreateAnnouncementValidator();
@@ -47,16 +52,13 @@ namespace UI_Layer.Controllers.Admin
             if (results.IsValid)
             {
                 var client = _httpClientFactory.CreateClient();
-
                 var jsonData = JsonConvert.SerializeObject(newAnnouncement);
-
                 StringContent jsonAnnouncement = new(jsonData, Encoding.UTF8, "application/json");
-                var responseMessage = await client.PostAsync("http://localhost:27312/api/Announcement", jsonAnnouncement);
+                var responseMessage = await client.PostAsync("https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/Announcement", jsonAnnouncement);
                 if (responseMessage.IsSuccessStatusCode)
                 {
                     var responseBody = await responseMessage.Content.ReadAsStringAsync();
                     var responseObject = JsonConvert.DeserializeObject<EmployeeManagerResponse>(responseBody);
-
                     if (responseObject.IsSuccess)
                     {
                         return RedirectToAction("Index", "Announcement");
@@ -75,12 +77,13 @@ namespace UI_Layer.Controllers.Admin
             }
             return View();
         }
-        [Route("announcementDetails")]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> AnnouncementDetails(int id)
+
+        [Route("Details/{announcementId}")]
+        [HttpGet]
+        public async Task<IActionResult> AnnouncementDetails(int announcementId)
         {
             var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"http://localhost:5144/api/Announcement/{id}");
+            var responseMessage = await client.GetAsync($"https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/Announcement/{announcementId}");
             if (responseMessage.IsSuccessStatusCode)
             {
                 var jsonData = await responseMessage.Content.ReadAsStringAsync();
@@ -91,3 +94,4 @@ namespace UI_Layer.Controllers.Admin
         }
     }
 }
+

@@ -5,8 +5,12 @@
     Layout = "~/Views/AdminLayout/AdminLayout.cshtml";
 }
 
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
 
-<div class="container">
+@if ((await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)
+{
+    <div class="container">
     <h1 class="mt-5">Yeni Departman Ekle</h1>
     <hr />
 
@@ -30,8 +34,7 @@
         </div>
     </div>
 </div>
-
-@section Scripts 
+    @section Scripts
 {
     <script>
         // Department formunu submit etme işlemi
@@ -44,11 +47,15 @@
             };
 
             try {
-                // Local Storage'dan token al
-                const token = localStorage.getItem("token");
+                // Cookie'den token al
+                const token = getCookie("AuthenticationToken");
+
+                if (!token) {
+                    throw new Error("Token bulunamadı");
+                }
 
                 // API'ye yeni departman ekleme isteği gönder
-                const response = await fetch("http://localhost:5144/api/Department", {
+                const response = await fetch("https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/Department", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -62,14 +69,28 @@
                 }
 
                 // Başarılı yanıt alındıysa yönlendirme yapıyoruz
-                window.location.href = "/Department/Index";
+                window.location.href = "/Department/DepartmentList/";
             } catch (error) {
                 console.error("Departman ekleme hatası:", error);
                 // Hata işleme
             }
         });
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
     </script>
+    }
 }
+else
+{
+    <p>You do not have access to the admin page.</p>
+}
+
+
+
     
 
  

@@ -31,7 +31,7 @@ namespace UI_Layer.Controllers.Login
 
                 var jsonData = JsonConvert.SerializeObject(loginEmployee);
                 StringContent jsonEmployee = new(jsonData, Encoding.UTF8, "application/json");
-                var responseMessage = await client.PostAsync("http://localhost:27312/api/Auth/Login", jsonEmployee);
+                var responseMessage = await client.PostAsync("https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/Auth/Login", jsonEmployee);
 
                 if (responseMessage.IsSuccessStatusCode)
                 {
@@ -45,7 +45,7 @@ namespace UI_Layer.Controllers.Login
                         // Tarayıcıya çerez olarak eklenmesi gereken işlemler
                         HttpContext.Response.Cookies.Append("AuthenticationToken", token);
                     }
-                    return RedirectToAction("Index", "EmployeeHome");
+                    return RedirectToAction("EmployeeHomePage", "EmployeeHome");
                 }
                 else
                 {

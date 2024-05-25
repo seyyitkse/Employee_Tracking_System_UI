@@ -12,9 +12,11 @@ using UI_Layer.Dtos.EmployeeDto;
 using UI_Layer.Authorization;
 using Newtonsoft.Json.Linq;
 using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace UI_Layer.Controllers.Login
 {
+    [AllowAnonymous]
     public class LoginAdminController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -78,10 +80,16 @@ namespace UI_Layer.Controllers.Login
                 {
                     return RedirectToAction("AdminHomePage", "AdminHome");
                 }
-                else
+                else if (userRole == "Employee")
                 {
                     // Redirect non-admin users to a different page
-                    return RedirectToAction("EmployeeHomePage", "EmployeeHome");
+                    return RedirectToAction("Index", "EmployeeHome");
+                }
+                else
+                {
+                   // Log the error
+                    System.Diagnostics.Debug.WriteLine("Error: Invalid role in the token.");
+                    return RedirectToAction("Error");
                 }
             }
             catch (JsonException ex)

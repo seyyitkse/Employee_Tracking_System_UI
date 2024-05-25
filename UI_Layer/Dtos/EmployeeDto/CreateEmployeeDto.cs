@@ -16,5 +16,8 @@ namespace UI_Layer.Dtos.EmployeeDto
             [StringLength(50)]
             [MinLength(5)]
             public string ConfirmPassword { get; set; }
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public int DepartmanID{ get; set; }
         }
 }
