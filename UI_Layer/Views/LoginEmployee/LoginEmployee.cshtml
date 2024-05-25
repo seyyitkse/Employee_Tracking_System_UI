@@ -8,10 +8,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login</title>
     <link rel="stylesheet" href="~/Project_Files/css/styles.min.css" />
-    <link rel="icon" href="~/Project_Files/logos/favicon.ico" />
+    <link rel="icon" href="~/project_files/logos/favicon.ico" />
 </head>
 
 <body>
+    <!--  Body Wrapper -->
     <div class="page-wrapper" id="main-wrapper">
         <div class="position-relative overflow-hidden radial-gradient min-vh-100 d-flex align-items-center justify-content-center">
             <div class="d-flex align-items-center justify-content-center w-100">
@@ -23,7 +24,7 @@
                                     <img src="~/Project_Files/logos/PersoneLock-banner.png" width="180" alt="40">
                                 </a>
                                 <p class="text-center">Personel Takip Sistemi</p>
-                                <form id="loginForm" method="post">
+                                <form id="loginForm" method="post" asp-action="LoginEmployee" asp-controller="LoginEmployee">
                                     <div asp-validation-summary="All"></div>
                                     <div class="mb-3">
                                         <label for="exampleInputEmail1" class="form-label">Mail</label>
@@ -42,7 +43,7 @@
                                                 Beni Hatırla
                                             </label>
                                         </div>
-                                        <a class="text-primary fw-bold" href="#">Forgot Password?</a>
+                                        <a class="text-primary fw-bold" href="./index.html">Forgot Password ?</a>
                                     </div>
                                     <button type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">Giriş Yap</button>
                                 </form>
@@ -55,45 +56,8 @@
     </div>
     <script src="~/Project-Files/js/jquery/dist/jquery.min.js"></script>
     <script src="~/Project-Files/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.getElementById("loginForm").addEventListener("submit", async function (event) {
-            event.preventDefault();
 
-            const formData = new FormData(this);
-            const loginData = {
-                email: formData.get("Email"),
-                password: formData.get("Password")
-            };
 
-            try {
-                const response = await fetch("http://localhost:27312/api/Auth/Login", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(loginData)
-                });
-
-                if (!response.ok) {
-                    throw new Error("Login failed");
-                }
-
-                const responseData = await response.json();
-                const token = responseData.token;
-
-                document.cookie = "jwt=" + token + ";path=/";
-
-                window.location.href = "/EmployeeHome/Index/";
-            } catch (error) {
-                console.error("Login error:", error);
-            }
-        });
-
-        function logout() {
-            document.cookie = "jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-            window.location.href = "/LoginEmployee/LoginEmployee";
-        }
-    </script>
 </body>
 
 </html>
