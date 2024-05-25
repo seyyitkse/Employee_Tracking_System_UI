@@ -4,7 +4,7 @@ const url = new URL(window.location.href);
 const id = url.searchParams.get('id');
 
 if (id !== null) {
-    fetch(`http://localhost:27312/api/ScheduleUser/${id}`)
+    fetch(`https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/ScheduleUser/${id}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
