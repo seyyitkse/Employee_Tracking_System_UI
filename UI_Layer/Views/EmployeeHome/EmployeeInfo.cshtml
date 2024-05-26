@@ -5,10 +5,10 @@
     Layout = "~/Views/EmployeeLayout/EmployeeLayout.cshtml";
 }
 
-<h1>EmployeeInfo</h1>
+<h1>Kullanıcı Bilgileri</h1>
 
 <div>
-    <h4>ResultEmployeeDto</h4>
+    <h4>Kullanıcı: @ViewBag.Username</h4>
     <hr />
     <dl class="row" id="employee-info">
         <dt class="col-sm-2">
@@ -50,15 +50,31 @@
 <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", async function () {
-        var token = document.cookie.replace(/(?:(?:^|.*;\s*)jwt\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        // Function to get cookie by name
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const token = getCookie('AuthenticationToken');
 
         if (token) {
-            var decoded = jwt_decode(token);
-            var userId = decoded.UserID;
+            const decoded = jwt_decode(token);
+            const userId = decoded.UserID;
 
             if (userId) {
                 try {
-                    const response = await fetch(`http://localhost:27312/api/Employee/${userId}`, {
+                    const response = await fetch(`https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/Employee/${userId}`, {
                         method: "GET",
                         headers: {
                             "Authorization": `Bearer ${token}`
