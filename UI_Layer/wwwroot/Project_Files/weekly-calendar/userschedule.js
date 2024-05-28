@@ -1,11 +1,14 @@
 ﻿import Calendar from './calendar.js';
 
 const calendarContainer = document.getElementById('calendar-container');
-const userId = calendarContainer.dataset.userId;
+const userId = calendarContainer.dataset.userId; // Correctly get the userId from dataset
 const token = calendarContainer.dataset.token;
 
-if (userId !== null) {
-    fetch(`https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/ScheduleUser/${userId}`, {
+console.log('Retrieved userId:', userId); // Log the userId for debugging
+console.log('Retrieved token:', token); // Log the token for debugging
+
+if (userId) { // Check if userId is not null or undefined
+    fetch(`https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/ScheduleUser/${userId}`, { // Update API request URL
         headers: {
             'Authorization': `Bearer ${token}`
         }

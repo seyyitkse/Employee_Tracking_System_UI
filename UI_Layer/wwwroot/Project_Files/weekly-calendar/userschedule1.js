@@ -1,11 +1,11 @@
 ﻿import Calendar from './calendar.js';
 
 const calendarContainer = document.getElementById('calendar-container');
-const userId = calendarContainer.dataset.userId;
+const id = calendarContainer.dataset.userId;
 const token = calendarContainer.dataset.token;
 
 if (userId !== null) {
-    fetch(`https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/ScheduleUser/${userId}`, {
+    fetch(`https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/${id}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
