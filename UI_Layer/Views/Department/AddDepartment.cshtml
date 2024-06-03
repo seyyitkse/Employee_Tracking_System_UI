@@ -8,85 +8,33 @@
 @using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
 
-@if ((await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)
-{
-    <div class="container">
-    <h1 class="mt-5">Yeni Departman Ekle</h1>
+
+<div class="container">
+    <h1 class="mt-5">Add New Department</h1>
     <hr />
 
     <div class="row">
         <div class="col-md-6">
-            <form id="departmentForm">
+            <form asp-action="AddDepartment" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                 <div class="form-group">
                     <br />
-                    <label asp-for="Name" class="control-label">Departman Adı:</label>
+                    <label asp-for="Name" class="control-label">Department Name:</label>
                     <input asp-for="Name" class="form-control" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
 
                 <br />
-                <button type="submit" class="btn btn-primary">Oluştur</button>
-                <a asp-action="Index" class="btn btn-outline-warning">Listeye Geri Dön</a>
-
+                <button type="submit" class="btn btn-primary">Create</button>
+                <a asp-action="DepartmentList" class="btn btn-outline-warning">Back to List</a>
             </form>
         </div>
     </div>
 </div>
-    @section Scripts
-{
-    <script>
-        // Department formunu submit etme işlemi
-        document.getElementById("departmentForm").addEventListener("submit", async function (event) {
-            event.preventDefault(); // Sayfanın yenilenmesini engelle
 
-            const formData = new FormData(this); // Form verilerini al
-            const departmentData = {
-                Name: formData.get("Name"),
-            };
-
-            try {
-                // Cookie'den token al
-                const token = getCookie("AuthenticationToken");
-
-                if (!token) {
-                    throw new Error("Token bulunamadı");
-                }
-
-                // API'ye yeni departman ekleme isteği gönder
-                const response = await fetch("https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/Department", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    },
-                    body: JSON.stringify(departmentData)
-                });
-
-                if (!response.ok) {
-                    throw new Error("Departman ekleme başarısız");
-                }
-
-                // Başarılı yanıt alındıysa yönlendirme yapıyoruz
-                window.location.href = "/Department/DepartmentList/";
-            } catch (error) {
-                console.error("Departman ekleme hatası:", error);
-                // Hata işleme
-            }
-        });
-
-        function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-        }
-    </script>
-    }
-}
-else
-{
-    <p>You do not have access to the admin page.</p>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }
 
 
