@@ -1,18 +1,10 @@
-﻿using FluentValidation.Results;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Text;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using UI_Layer.Dtos.AdminDto;
-using UI_Layer.ValidationRules.Admin;
 using System.IdentityModel.Tokens.Jwt;
-using UI_Layer.Dtos.EmployeeDto;
+using System.Security.Claims;
 using UI_Layer.Authorization;
-using Newtonsoft.Json.Linq;
-using Humanizer;
-using Microsoft.AspNetCore.Authorization;
+using UI_Layer.Dtos.EmployeeDto;
 
 namespace UI_Layer.Controllers.Login
 {
@@ -31,10 +23,10 @@ namespace UI_Layer.Controllers.Login
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Login(LoginEmployeeDto model)
+        public async Task<IActionResult> LoginAdmin(LoginEmployeeDto model)
         {
             var httpClient = _httpClientFactory.CreateClient();
-            var response = await httpClient.PostAsJsonAsync("http://localhost:27312/api/Auth/Login", model);
+            var response = await httpClient.PostAsJsonAsync("https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/Auth/Login", model);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -83,7 +75,9 @@ namespace UI_Layer.Controllers.Login
                 else if (userRole == "Employee")
                 {
                     // Redirect non-admin users to a different page
-                    return RedirectToAction("Index", "EmployeeHome");
+                    Response.Cookies.Delete("AuthenticationToken");
+                    // Redirect non-admin users to a different page
+                    return RedirectToAction("AccessDenied", "ErrorPage");
                 }
                 else
                 {
@@ -111,82 +105,6 @@ namespace UI_Layer.Controllers.Login
             HttpContext.Response.Cookies.Delete("AuthenticationToken");
             return RedirectToAction("HomePage", "HomeScreen");
         }
-
-        //[HttpPost]
-        //public async Task<IActionResult> LoginAdmin(LoginAdminDto loginAdmin)
-        //{
-        //    AdminLoginValidator validations = new AdminLoginValidator();
-        //    ValidationResult results = validations.Validate(loginAdmin);
-        //    if (results.IsValid)
-        //    {
-        //        var client = _httpClientFactory.CreateClient();
-
-        //        var jsonData = JsonConvert.SerializeObject(loginAdmin);
-        //        StringContent jsonAdmin = new(jsonData, Encoding.UTF8, "application/json");
-        //        var responseMessage = await client.PostAsync("http://localhost:27312/api/Auth/Login", jsonAdmin);
-
-        //        if (responseMessage.IsSuccessStatusCode)
-        //        {
-        //            var tokenResponse = await responseMessage.Content.ReadAsStringAsync();
-        //            var tokenObject = JsonConvert.DeserializeObject<dynamic>(tokenResponse);
-        //            var token = tokenObject.Token.ToString();
-
-        //            if (!string.IsNullOrEmpty(token))
-        //            {
-        //                // Decode the token
-        //                var tokenHandler = new JwtSecurityTokenHandler();
-        //                var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
-
-        //                // Check if the token is valid and not expired
-        //                if (jwtToken != null && jwtToken.ValidTo > DateTime.UtcNow)
-        //                {
-        //                    // Access role information from the token payload
-        //                    var roleClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
-
-        //                    if (roleClaim != null)
-        //                    {
-        //                        string userRole = roleClaim.Value;
-
-        //                        // Use role information as needed
-        //                        if (userRole == "Admin")
-        //                        {
-        //                            HttpContext.Response.Cookies.Append("AuthenticationToken", token, new CookieOptions
-        //                            {
-        //                                HttpOnly = true,
-        //                                Secure = true,
-        //                                SameSite = SameSiteMode.Strict
-        //                            });
-
-        //                            return RedirectToAction("AdminHomePage", "AdminHome");
-        //                        }
-        //                        else
-        //                        {
-        //                            ModelState.AddModelError(string.Empty, "Unauthorized access. You are not an admin.");
-        //                        }
-        //                    }
-        //                    else
-        //                    {
-        //                        ModelState.AddModelError(string.Empty, "Role information not found in the token.");
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    ModelState.AddModelError(string.Empty, "Invalid or expired token received from the API.");
-        //                }
-        //            }
-        //            else
-        //            {
-        //                ModelState.AddModelError(string.Empty, "Token not received from the API.");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-        //        }
-        //    }
-        //    return View(loginAdmin);
-        //}
-
 
     }
 }
