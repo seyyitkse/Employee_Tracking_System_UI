@@ -8,7 +8,7 @@
 
 @if ((await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)
 {
-    <h1>AdminHomePage</h1>
+    <h1>Admin Sayfasına Hoş Geldiniz! <br /> @ViewBag.Name</h1>
 }
 else
 {
