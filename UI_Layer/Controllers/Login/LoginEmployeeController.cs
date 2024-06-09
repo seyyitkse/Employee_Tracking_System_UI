@@ -25,7 +25,7 @@ namespace UI_Layer.Controllers.Login
         public async Task<IActionResult> LoginEmployee(LoginEmployeeDto model)
         {
             var httpClient = _httpClientFactory.CreateClient();
-            var response = await httpClient.PostAsJsonAsync("http://localhost:27312/api/Auth/Login", model);
+            var response = await httpClient.PostAsJsonAsync("https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/Auth/Login", model);
 
             if (!response.IsSuccessStatusCode)
             {
