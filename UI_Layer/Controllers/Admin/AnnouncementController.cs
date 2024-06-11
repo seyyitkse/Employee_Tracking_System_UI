@@ -11,8 +11,7 @@ using UI_Layer.ValidationRules.Announcement;
 namespace UI_Layer.Controllers.Admin
 {
 
-    [Authorize(Policy = "AdminPolicy")]
-    [Route("/Announcement/{otherId}")]
+  
     public class AnnouncementController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -38,13 +37,13 @@ namespace UI_Layer.Controllers.Admin
             return View();
         }
 
-        [HttpGet("Add")]
+        [HttpGet]
         public IActionResult AddAnnouncement()
         {
             return View();
         }
 
-        [HttpPost("Add")]
+        [HttpPost]
         public async Task<IActionResult> AddAnnouncement(CreateAnnouncementDto newAnnouncement)
         {
             CreateAnnouncementValidator validations = new CreateAnnouncementValidator();
