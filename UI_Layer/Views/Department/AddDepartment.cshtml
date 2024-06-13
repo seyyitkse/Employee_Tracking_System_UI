@@ -10,7 +10,7 @@
 
 
 <div class="container">
-    <h1 class="mt-5">Add New Department</h1>
+    <h1 class="mt-5">Departman Ekleme İşlemi</h1>
     <hr />
 
     <div class="row">
@@ -20,14 +20,14 @@
 
                 <div class="form-group">
                     <br />
-                    <label asp-for="Name" class="control-label">Department Name:</label>
+                    <label asp-for="Name" class="control-label">Departman Adı:</label>
                     <input asp-for="Name" class="form-control" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
 
                 <br />
-                <button type="submit" class="btn btn-primary">Create</button>
-                <a asp-action="DepartmentList" class="btn btn-outline-warning">Back to List</a>
+                <button type="submit" class="btn btn-primary">Oluştur</button>
+                <a asp-action="DepartmentList" class="btn btn-outline-warning">Departman Listesine Dön</a>
             </form>
         </div>
     </div>
