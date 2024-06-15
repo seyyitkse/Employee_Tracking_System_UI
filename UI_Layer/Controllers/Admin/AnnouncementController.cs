@@ -77,8 +77,7 @@ namespace UI_Layer.Controllers.Admin
             return View();
         }
 
-        [Route("Details/{announcementId}")]
-        [HttpGet]
+        [HttpGet("details")]
         public async Task<IActionResult> AnnouncementDetails(int announcementId)
         {
             var client = _httpClientFactory.CreateClient();
