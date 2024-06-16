@@ -87,20 +87,20 @@
                     var userId = this.getAttribute('data-user-id'); // Kullanıcı kimliğini al
                     if (userId) {
                         // Form elemanlarını al
-                        // Kullanıcının idsini gizli şekilde aktarma 
+                        // Kullanıcının idsini gizli şekilde aktarma
                         var formHTML = `
-                                        <h3>Çalışan Mesai Ekle</h3>
-                                        <form id="scheduleForm">
-                                            <label for="starttime">Başlangıç Zamanı:</label><br>
-                                            <input type="datetime-local" id="starttime" name="starttime"><br>
-                                            <label for="endtime">Bitiş Zamanı:</label><br>
-                                            <input type="datetime-local" id="endtime" name="endtime"><br>
-                                            <label for="description">Açıklama:</label><br>
-                                            <input type="text" id="description" name="description"><br><br>
-                                            <input type="hidden" id="userId" name="userId" value="${userId}">
-                                            <button type="submit">Kaydet</button>
-                                        </form>
-                                    `;
+                                            <h3>Çalışan Mesai Ekle</h3>
+                                            <form id="scheduleForm">
+                                                <label for="starttime">Başlangıç Zamanı:</label><br>
+                                                <input type="datetime-local" id="starttime" name="starttime"><br>
+                                                <label for="endtime">Bitiş Zamanı:</label><br>
+                                                <input type="datetime-local" id="endtime" name="endtime"><br>
+                                                <label for="description">Açıklama:</label><br>
+                                                <input type="text" id="description" name="description"><br><br>
+                                                <input type="hidden" id="userId" name="userId" value="${userId}">
+                                                <button type="submit">Kaydet</button>
+                                            </form>
+                                        `;
 
                         // Modal içeriğini güncelle
                         var modalContent = document.getElementById('myModal').querySelector('.modal-content');
@@ -117,7 +117,7 @@
                             var description = document.getElementById('description').value;
                             var userId = document.getElementById('userId').value; // Kullanıcı kimliğini al
                             // API'ye istek gönder ve mesai ekle
-                            fetch(`https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/api/ScheduleUser/`, {
+                            fetch(`https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/ScheduleUser/`, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'
@@ -133,11 +133,18 @@
                                     if (!response.ok) {
                                         throw new Error('Network response was not ok');
                                     }
-                                    return response.json();
+                                    return response.text(); // Get response as text
                                 })
-                                .then(data => {
-                                    console.log('Mesai ekleme başarılı:', data);
-                                    $('#myModal').modal('hide'); 
+                                .then(text => {
+                                    try {
+                                        const data = JSON.parse(text); // Attempt to parse JSON
+                                        console.log('Mesai ekleme başarılı:', data);
+                                        $('#myModal').modal('hide');
+                                    } catch (error) {
+                                        console.error('Mesai ekleme hatası: JSON parse error', error);
+                                        console.error('Received response:', text); // Log the raw response
+                                        $('#myModal').modal('hide');
+                                    }
                                 })
                                 .catch(error => {
                                     console.error('Mesai ekleme hatası:', error);
@@ -150,6 +157,7 @@
                 });
             });
         </script>
+
     }
 </body>
 </html>
