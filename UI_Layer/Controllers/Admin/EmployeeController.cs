@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
+using UI_Layer.Dtos.DepartmentDto;
 using UI_Layer.Dtos.EmployeeDto;
 using UI_Layer.ValidationRules.Employee;
 
 namespace UI_Layer.Controllers.Admin
 {
+
     public class EmployeeController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -44,6 +46,7 @@ namespace UI_Layer.Controllers.Admin
             ValidationResult results = validations.Validate(newEmployee);
             if (results.IsValid)
             {
+                newEmployee.DepartmanID = 1;
                 var userRoles=User.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Role).Select(c => c.Value);
                 var accessToken = HttpContext.Request.Cookies["AuthenticationToken"];
                 var client = _httpClientFactory.CreateClient();
@@ -103,6 +106,39 @@ namespace UI_Layer.Controllers.Admin
                 return View();
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> EmployeeDetails(int id)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var responseMessage = await client.GetAsync($"https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/Employee/{id}");
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                var jsonData = await responseMessage.Content.ReadAsStringAsync();
+                var employee = JsonConvert.DeserializeObject<ResultEmployeeDto>(jsonData);
+
+                // Get the department details
+                var departmentResponse = await client.GetAsync($"https://trackingprojectwebappservice20240505190044.azurewebsites.net/api/Department/{employee.DepartmentID}");
+                if (departmentResponse.IsSuccessStatusCode)
+                {
+                    var departmentData = await departmentResponse.Content.ReadAsStringAsync();
+                    var department = JsonConvert.DeserializeObject<ResultDepartmentDto>(departmentData);
+                    ViewBag.DepartmentName = department.Name;
+                }
+                else
+                {
+                    employee.DepartmentName = "Not assigned";
+                }
+
+                return View(employee);
+            }
+            else
+            {
+                // Log the error message or handle it as needed
+                ViewBag.ErrorMessage = "Failed to load employee details.";
+            }
+            return View(null); // Passing null to the view in case of an error
+        }
+
 
     }
 
