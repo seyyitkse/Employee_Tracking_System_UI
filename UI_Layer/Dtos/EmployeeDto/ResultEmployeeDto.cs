@@ -7,5 +7,6 @@
         public string? FirstName { get; set; }
         public string? Lastname { get; set; }
         public int DepartmentID{ get; set; }
+        public string? DepartmentName { get; set; }
     }
 }
