@@ -29,8 +29,11 @@
                     <td>@item.Name</td>
                     <td>@(item.Status ? "Aktif" : "Kapatıldı")</td>
                     <td>
-                        @*                         <a asp-action="AnnouncementDetails" asp-controller="Announcement" asp-route-id="@item.ID" class="btn btn-primary">Departmanı Kapat</a>
-                    *@                        <a asp-action="AnnouncementDetails" asp-controller="Department" asp-route-id="@item.DepartmentID" class="btn btn-primary">Detay</a>
+                      <a asp-action="DepartmentDetails" asp-controller="Department" asp-route-id="@item.DepartmentID" class="btn btn-primary">Detay</a>
+                   @*    <form asp-action="CloseDepartment" asp-controller="Department" onsubmit="return confirm('Departmanı kapatmak istiyor musunuz?');">
+                                <input type="hidden" name="id" value="@item.DepartmentID" />
+                                <button type="submit" class="btn btn-danger">Departmanı Kapat</button>
+                      </form> *@
                     </td>
                 </tr>
             }
