@@ -1,10 +1,10 @@
 ﻿@using UI_Layer.Dtos.AnnouncementDto
 @model List<ResultAnnouncementDto>
+
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/AdminLayout/AdminLayout.cshtml";
 }
-<!DOCTYPE html>
 
 <div class="container-fluid mt-4">
     <h3>Duyurular</h3>
@@ -27,17 +27,14 @@
                     <td>@item.TypeID</td>
                     <td>@item.Date.ToShortDateString()</td>
                     <td>
-                        <a  asp-action="AnnouncementDetails" asp-controller="Announcement" asp-route-id="@item.ID" class="btn btn-primary">Detay</a>
+                        <a asp-action="AnnouncementDetails" asp-controller="Announcement" asp-route-announcementId="@item.ID" class="btn btn-primary">Detay</a>
                     </td>
                 </tr>
             }
-
         </tbody>
     </table>
     <br>
     <div class="mt-4">
-        <a class="btn btn-success"  asp-controller="Announcement" asp-action="AddAnnouncement">Yeni Duyuru Oluştur</a>
+        <a class="btn btn-success" asp-controller="Announcement" asp-action="AddAnnouncement">Yeni Duyuru Oluştur</a>
     </div>
 </div>
-</html>
-
