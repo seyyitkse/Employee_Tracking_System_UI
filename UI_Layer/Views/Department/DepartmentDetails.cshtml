@@ -1,0 +1,27 @@
+﻿@model ResultDepartmentDto
+
+@{
+    ViewData["Title"] = "Department Details";
+    Layout = "~/Views/AdminLayout/AdminLayout.cshtml";
+}
+
+<div class="container">
+    <h1 class="mt-5">@ViewData["Title"]</h1>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <dl class="row">
+                <dt class="col-sm-4">Department ID:</dt>
+                <dd class="col-sm-8">@Model.DepartmentID</dd>
+
+                <dt class="col-sm-4">Department Name:</dt>
+                <dd class="col-sm-8">@Model.Name</dd>
+
+                <!-- Add more fields as needed -->
+            </dl>
+
+            <a asp-action="DepartmentList" class="btn btn-outline-warning">Back to List</a>
+        </div>
+    </div>
+</div>
