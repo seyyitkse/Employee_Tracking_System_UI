@@ -406,13 +406,13 @@ export default class Calendar {
 
   _getDayName(date) {
     const dayNames = [
-      'Pazar',
-      'Pazartesi',
-      'Salı',
-      'Çarşamba',
-      'Perşembe',
+      'Pzr',
+      'Pzt',
+      'Sal',
+      'Çarş',
+      'Perş',
       'Cuma',
-      'Cumartesi'
+      'Ctesi'
     ];
     return dayNames[date.getDay()];
   }
