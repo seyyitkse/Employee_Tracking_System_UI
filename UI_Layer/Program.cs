@@ -17,57 +17,22 @@ var jwtKey = builder.Configuration["AuthSettings:Key"];
 var jwtAudience = builder.Configuration["AuthSettings:Audience"];
 var key = Encoding.ASCII.GetBytes(jwtKey);
 
-//builder.Services.AddAuthentication(options =>
-//{
-//    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-//})
-//.AddJwtBearer(options =>
-//{
-//    options.TokenValidationParameters = new TokenValidationParameters
-//    {
-//        ValidateIssuer = true,
-//        ValidateAudience = true,
-//        ValidateLifetime = true,
-//        ValidateIssuerSigningKey = true,
-//        ValidIssuer = jwtIssuer,
-//        ValidAudience = jwtAudience,
-//        //IssuerSigningKey = new SymmetricSecurityKey(key)
-//    };
-//})
-//.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-//{
-//    options.Events = new CookieAuthenticationEvents
-//    {
-//        OnValidatePrincipal = async context =>
-//        {
-//            var token = context.Request.Cookies["AuthenticationToken"];
-//            if (token != null)
-//            {
-//                var handler = new JwtSecurityTokenHandler();
-//                var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
-
-//                if (jsonToken != null)
-//                {
-//                    var claimsIdentity = new ClaimsIdentity(jsonToken.Claims, "AuthenticationToken");
-//                    context.Principal = new ClaimsPrincipal(claimsIdentity);
-//                }
-//            }
-//        }
-//    };
-//});
+// Cookie authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-        .AddCookie(options =>
-        {
-            options.LoginPath = "/LoginAdmin/LoginAdmin";
-            options.AccessDeniedPath = "/ErrorPage/AccessDenied";
-        });
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/LoginAdmin/LoginAdmin";
+        options.AccessDeniedPath = "/ErrorPage/AccessDenied";
+    });
 
+// Authorization policy
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("EmployeePolicy", policy => policy.RequireRole("Employee"));
 });
 
+// Cookie policy
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
     options.CheckConsentNeeded = context => false;
@@ -78,14 +43,19 @@ var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/ErrorPage/ErrorPage"); // Özel hata sayfanýz
     app.UseHsts();
 }
-app.UseStatusCodePagesWithReExecute("/Error/{0}");
+
+// Durum kodu sayfalarýný yeniden yönlendirme
+app.UseStatusCodePagesWithReExecute("/ErrorPage/{0}");
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseCookiePolicy();
+
+// Middleware to add Authorization header
 app.Use(async (context, next) =>
 {
     var token = context.Request.Cookies["AuthenticationToken"];
@@ -95,11 +65,13 @@ app.Use(async (context, next) =>
         {
             context.Request.Headers.Remove("Authorization");
         }
-        context.Request.Headers.Add("Authorization", "Bearer " + token);
+        context.Request.Headers.Add("Authorization", $"Bearer {token}");
     }
     await next();
 });
+
 app.UseMiddleware<ValidateTokenMiddleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
