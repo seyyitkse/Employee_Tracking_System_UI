@@ -1,0 +1,4 @@
+﻿//Departman silme işlemi//
+//Çıkış yapılınca tokenın silinmesi
+//Mesai eklemede sorun  var//
+Giriş varsa sisteme giriş eklenmesi engellenmeli(sisteme giriş yapan kullanıcı bilinmiyorsa)
